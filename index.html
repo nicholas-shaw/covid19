@@ -1,0 +1,471 @@
+<head>
+    <title>My Corona</title>
+    <script>
+                // Make the DIV element draggable:
+
+        function makeDraggable(selectedElement) {
+            dragElement(document.getElementById("mydiv"));
+        }
+
+
+        function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        if (document.getElementById(elmnt.id + "header")) {
+            // if present, the header is where you move the DIV from:
+            document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+        } else {
+            // otherwise, move the DIV from anywhere inside the DIV: 
+            elmnt.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        }
+
+        function closeDragElement() {
+            // stop moving when mouse button is released:
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+        }
+
+        function init() {
+            dataSet = JSON.parse(localStorage.getItem('covid19_general'));
+            composeTable(dataSet, 0);
+            getListOfCountries();
+            
+        }
+
+    </script>
+
+<style>
+
+    :root {
+        --outerTableRounding: 5px;
+        --main-color: #9AA5B5;
+        --death-color: black;
+        --neutral-color: #FBFAFA;
+        --recovered-color: #A8B400;
+        --action-color: #62959F;
+        --dark-brand: #25232F;
+        --box-shadow-default: 0px 1px 3px rgba(0,0,0,0.3);
+    }
+
+    body, html {
+        background-color:#f4f4f4;
+        margin: 0px;
+        padding: 0px;
+        font-family: sans-serif;
+        letter-spacing: -1px;
+    }
+
+h1 {
+    padding: 20px;
+}
+
+button {
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: none;
+    background-color: white;
+    color: purple;
+}
+
+button:hover {
+    background-color: purple;
+    color: white;
+}
+
+#header{
+    background-color:lightslategray;
+    margin: 0px;
+    padding: 20px;
+    color: white;
+}
+
+#container {
+    margin: 10px;
+    display: grid;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px; 
+}
+
+    #listOfCards > div:nth-child(1) {
+        border-top-left-radius: var(--outerTableRounding);
+        border-top-right-radius: var(--outerTableRounding);
+    }
+
+    #ListOfCards > div:nth-last-child(1) {
+        border-bottom-left-radius: var(--outerTableRounding);
+        border-bottom-right-radius: var(--outerTableRounding);
+    }
+
+.card {
+    display: grid; 
+    grid-template-columns: repeat(4, minmax(120px,1fr)); 
+    grid-template-rows: repeat(3, 1fr); 
+    grid-column-gap: 0px;
+    grid-row-gap: 0px; 
+    max-width: 900px;
+    border: 1px solid #ccc;
+    margin: 0px auto ;
+    margin-top: -1px;
+    background-color: white;
+    box-shadow: 3px 3px 3px rgba(50,50,50,.1);
+}
+
+
+
+.card > * {
+    padding: 10px;
+}
+
+.card h2 {
+    grid-area: 1 / 2 / 2 / 5;
+    margin: 0px 5px 5px;
+}
+
+.deviceImage {
+    grid-area: 1 / 1 / 4 / 2;
+}
+
+.largerImage {
+    position: fixed;
+    top: 10vh;
+    left: 10vw;
+    margin: 100px auto;
+    background-color: white;
+    display: block;
+    /* height: 500; */
+    /* width: 90vw; */
+    display: none;
+    border-radius: 20px;
+    box-shadow: 0px 3px 10px black;
+}
+
+.largerImage > img {
+    margin: 10px;
+}
+
+.deviceImage img {
+    height: 150px;
+    width: auto;
+    padding: 20px 10px;
+}
+
+.rrp {
+    grid-area: 3 / 4 / 4 / 5;
+    text-align: right;
+    color: #333;
+    font-size: 18px;
+    font-weight: 400;
+    margin: 10px;
+}
+
+.rrpLabel {
+    font-size: 10px;
+}
+
+#currentConfirmed {
+    margin: 10px auto;
+    text-align: center;
+}
+
+#currentConfirmedValue {
+    height: 200px;
+    border: 10px solid white;
+    width: 200px;
+    border-radius: 110px;
+    background-color: var(--main-color);
+    color: white;
+    line-height: 200px;
+    font-size: 35px;
+    font-weight: 700;
+    text-align: center;
+    box-shadow: var(--box-shadow-default);
+
+}
+
+#graph_total {
+    display: flex;  
+    width: 900px;
+    height: 50px;
+    margin: 50px auto;
+}
+
+#graph_total > div {
+    display: inline-block;
+}
+
+.graph_section {
+    height: 50px;
+    margin: 0px;
+    color: white;
+    font-size: 10px;
+}
+
+.graph_section_label {
+    text-align: center;
+}
+
+#graphRow, #graphLabels {
+    width: 100%;
+}
+
+#graphRow div {
+    display: inline-block;
+    border: 10px solid white;
+    border-collapse: collapse;
+    box-shadow: var(--box-shadow-default);
+    overflow: hidden;
+
+}
+
+#graph_total {
+    border: 10px solid white;
+    border-radius: 40px;
+    box-shadow: var(--box-shadow-default);
+}
+
+#graph_total > div:nth-child(1) > div {
+    border-top-left-radius: 45px;
+    border-bottom-left-radius: 45px;
+    border-right: 0px;
+}
+
+#graph_total > div:nth-last-child(1) > div {
+    border-top-right-radius: 45px;
+    border-bottom-right-radius: 45px;
+    border-left: 10px;
+}
+
+#graph_remainder > div:nth-child(1) {
+    background-color: var(--main-color);
+}
+
+#graph_deaths > div:nth-child(1)  {
+    background-color: var(--dark-brand);
+}
+
+#graph_recovered > div:nth-child(1)  {
+    background-color: var(--recovered-color);
+}
+
+</style>
+</head>
+<body onload='init();'>
+
+    <div id='header'>
+        <h1>Corona on a page</h1>
+    </div>
+
+    <div id='container'>
+            <button onClick="dataSet = getData();">Refresh data</button>
+            <form class="search-form" onSubmit="return false">
+                    <select id='countryDropdown' onchange='retreiveCountryData(this.value);'>
+                    </select>
+                    <input type="text" id='searchBox' class="search" placeholder="Just show me..." >
+                    <button onclick="searchAndDisplay(document.getElementById('searchBox').value);" type='button'>Submit</button>
+                    <ul class="suggestions">
+                    </ul>
+            </form>
+
+        <div id='lastUpdated'>Data current at: <span id='lastUpdatedValue'></span></div>
+        <div id='currentConfirmed'>
+            <div id='currentConfirmedValue'></div>
+            Current confirmed cases 
+        </div>
+        <div id='currentDeaths'>
+            Deaths: <span id='currentDeathsValue'></span>
+        </div>
+        <div id='currentRecovery'>
+            Recovered: <span id='currentRecoveryValue'></span>
+        </div>
+        <div id='graphContainer'>
+            <div id='graph_total'>
+                <div id='graph_remainder'>
+                    <div class='graph_section' id='graph_remainder'></div>
+                    <div class='graph_section_label' id='graph_remainder_label'>&nbsp;</div>
+                </div>
+                <div id='graph_deaths'>
+                        <div class='graph_section' id=''>DEATHS</div>
+                        <div class='graph_section_label' id='graph_deaths_label'></div>
+                </div>
+                <div id='graph_recovered'>
+                        <div class='graph_section' id=''>RECOVERED</div>
+                        <div class='graph_section_label' id='graph_recovered_label'></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script> 
+
+        let covid19 = [];
+        let listOfCountries = [];
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function getData() {
+            lastData = JSON.parse(localStorage.getItem('covid19_general'));
+            fetch('https://covid19.mathdro.id/api')
+                .then((response) => {
+                return response.json();
+            })
+            .then((myJson) => {
+                covid19 = myJson;
+                localStorage.setItem('covid19_general', JSON.stringify(covid19));
+            })
+            .then(function() {
+                getListOfCountries();
+            });
+        
+        }
+        
+        function composeTable(myJson) {
+            fillInFields(myJson);
+            updateGraph(myJson);
+        }
+
+function fillInFields(data) {
+    timeNow = new Date();
+    console.log(timeNow);
+    document.getElementById('lastUpdatedValue').innerHTML = new Date(data.lastUpdate);
+    document.getElementById('currentConfirmedValue').innerHTML = numberWithCommas(data.confirmed.value);
+    document.getElementById('currentDeathsValue').innerHTML = numberWithCommas(data.deaths.value);
+    document.getElementById('currentRecoveryValue').innerHTML = numberWithCommas(data.recovered.value);
+}
+
+function updateGraph(data) {
+    let remainderWidth = 0;
+    let deathsWidth = 0;
+    let recoveryWidth = 0;
+    if(data.confirmed.value > 0) {
+        remainderWidth = (Number(data.confirmed.value) - Number(data.deaths.value) - Number(data.recovered.value) ) / Number(data.confirmed.value) * 100;
+
+    }
+    console.log(remainderWidth);
+    if(data.deaths.value > 0) {
+        deathsWidth = Number(data.deaths.value) / Number(data.confirmed.value) * 100;
+    }
+    console.log(deathsWidth);
+    if(data.recovered.value > 0) {
+        recoveryWidth = Number(data.recovered.value) / Number(data.confirmed.value) * 100;
+    }
+
+    console.log(recoveryWidth);
+
+    document.getElementById('graph_remainder').style.width = `${remainderWidth}%`;
+    document.getElementById('graph_deaths').style.width = `${deathsWidth}%`;
+    document.getElementById('graph_recovered').style.width = `${recoveryWidth}%`;
+    document.getElementById('graph_deaths_label').innerHTML = `${deathsWidth.toFixed(1)}%`;
+    document.getElementById('graph_recovered_label').innerHTML = `${recoveryWidth.toFixed(1)}%`;
+    
+}
+
+function retreiveCountryData(country) {
+            fetch(`https://covid19.mathdro.id/api/countries/${country}`)
+                .then((response) => {
+                return response.json();
+            })
+            .then((myJson) => {
+                countryInfo = myJson;
+                storageItem = 'countryData' + country
+                localStorage.setItem(storageItem, JSON.stringify(countryInfo));
+                console.log(localStorage.getItem(storageItem))
+                fillInFields(countryInfo);
+                updateGraph(countryInfo);
+            }).catch(function(error) {
+                console.error(error);
+            });
+}
+
+function findMatches(wordToMatch, list) {
+  return list.filter(device => {
+    const regex = new RegExp(wordToMatch, 'gi');
+    return device.label.match(regex) || device.brand.match(regex)
+  });
+}
+
+function filterDupes(list) {
+    var newArray = [];
+     var lookupObject  = {};
+
+     for(var i in list) {
+        lookupObject[list[i]['label']] = list[i];
+     }
+
+     for(i in lookupObject) {
+         newArray.push(lookupObject[i]);
+     }
+      return newArray;
+}
+
+function searchAndDisplay(term) {
+    document.getElementById('listOfCards').innerHTML = '';
+    let listOfMatches = filterDupes(findMatches(term,dataSet));
+    createTable(listOfMatches,0);
+    return false;
+};
+
+function getListOfCountries() {
+            fetch('https://covid19.mathdro.id/api/countries')
+                .then((response) => {
+                return response.json();
+            })
+            .then((myJson) => {
+                console.log(myJson.countries);
+                    for (const [key, value] of Object.entries(myJson.countries)) {
+                        console.log(key,value);
+                        document.getElementById('countryDropdown').innerHTML += `<option value='${value}'>${key}</option>`
+                }
+            })
+            .then(function() {
+                listOfCountries.forEach(country => {
+                    console.log(country);
+                })
+
+            }).catch(function(error) {
+                console.error(error);
+            });
+}
+
+
+document.getElementById('searchBox').addEventListener('keyup', function(e) {
+    if(e.keyCode === 13){
+        searchAndDisplay(document.getElementById('searchBox').value);
+    };
+    e.preventDefault();
+}, false);
+
+function hideLargeImages() {
+    for(i=0;i<document.getElementsByClassName('largerImage').length;i++) {
+        document.getElementsByClassName('largerImage')[i].style.display = 'none';
+    }
+}
+
+        </script>
+
+</body>
