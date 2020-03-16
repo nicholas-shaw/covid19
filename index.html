@@ -57,7 +57,7 @@ button:hover {
 }
 
 #header{
-    background-color:lightslategray;
+    background-color: #1c2a01;
     margin: 0px;
     position: fixed;
     top: 0px;
@@ -382,7 +382,8 @@ function retreiveCountryData(country) {
                 countryInfo = myJson;
                 storageItem = 'countryData' + country
                 localStorage.setItem(storageItem, JSON.stringify(countryInfo));
-                console.log(localStorage.getItem(storageItem))
+                console.log(localStorage.getItem(storageItem));
+                document.getElementById('headerCountry').innerHTML = country;
                 fillInFields(countryInfo);
                 updateGraph(countryInfo);
             }).catch(function(error) {
@@ -485,12 +486,12 @@ function filterDupes(list) {
       return newArray;
 }
 
-function searchAndDisplay(term) {
-    document.getElementById('listOfCards').innerHTML = '';
-    let listOfMatches = filterDupes(findMatches(term,dataSet));
-    createTable(listOfMatches,0);
-    return false;
-};
+// function searchAndDisplay(term) {
+//     document.getElementById('listOfCards').innerHTML = '';
+//     let listOfMatches = filterDupes(findMatches(term,dataSet));
+//     createTable(listOfMatches,0);
+//     return false;
+// };
 
 function getListOfCountries() {
             fetch('https://covid19.mathdro.id/api/countries')
@@ -513,14 +514,10 @@ function getListOfCountries() {
             });
 }
 
-function hideLargeImages() {
-    for(i=0;i<document.getElementsByClassName('largerImage').length;i++) {
-        document.getElementsByClassName('largerImage')[i].style.display = 'none';
-    }
-}
-
 //TODO
+        //FIX SO THAT DATA IS FETCHED ON FIRST LOAD - CURRENTLY NEED TO PUSH THE BUTTON.
 //CORNERS ROUNDED ON PARENT ELEMENT FOR HTE GRAPH, NOT THE BITS
+//FIX EVERYTHING WHERE THERE'S AN ERROR GETTING DATA, OR THE DATA IS AT 0 (deaths or recovery for eg).
 //FIX TITLES AND MAKE THEM FLEXIBLE ENOUGH TO CATER FOR 0 OR SMALL VALUES - Move title for deaths above perhaps?
 //INCLUDE COUNTRY POPULATION TO SEE % IMPACTED?
 
