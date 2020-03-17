@@ -384,9 +384,9 @@ function retreiveCountryData(country) {
                 storageItem = 'countryData' + country
                 localStorage.setItem(storageItem, JSON.stringify(countryInfo));
                 console.log(localStorage.getItem(storageItem));
-                document.getElementById('headerCountry').innerHTML = country;
                 fillInFields(countryInfo);
                 updateGraph(countryInfo);
+                document.getElementById('headerCountry').innerHTML = country;
             }).catch(function(error) {
                 alert("No data for this country, I guess they're safe for now?");
             });
