@@ -376,7 +376,6 @@ button:hover {
             document.getElementById('headerCountry').innerHTML = 'The World';
             fetch('https://covid19.mathdro.id/api')
                 .then((response) => {
-                return response.json();
             })
             .then((myJson) => {
                 covid19 = myJson;
@@ -390,6 +389,7 @@ button:hover {
             })
             .then(function() {
                 init();
+                return response.json();
             });
             }
         }
