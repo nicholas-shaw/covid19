@@ -9,7 +9,7 @@
 
         function init() {
             dataSet = JSON.parse(localStorage.getItem('covid19_general'));
-            console.log('dataSet: ' + dataSet)
+            //console.log('dataSet: ' + dataSet)
             composeTable(dataSet, 0);
             getListOfCountries();
             buildDailyData();            
@@ -76,8 +76,8 @@ button:hover {
 #container {
     padding: 20px;
     padding-top: 150px;
-    width: 1100px;
-    max-width: 80%;
+    max-width: 1100px;
+    width: 80%;
     margin: 10px auto;
     display: grid;
     grid-column-gap: 0px;
@@ -91,6 +91,17 @@ button:hover {
     margin: 10px auto;
     width: 200px;
     z-index: 20;
+}
+
+#statusMessage {
+    opacity: 0;
+    text-align: center;
+    width: 50%;
+    margin: 5px auto;
+    background-color: white;
+    border: 2px solid #daa04b;
+    padding: 5px;
+    transition: all 1s ease-in-out;
 }
 
 #lastUpdated {
@@ -127,7 +138,7 @@ button:hover {
 
 #graph_total {
     display: flex;  
-    width: 900px;
+    max-width: 900px;
     height: 50px;
     margin: 50px auto;
 }
@@ -146,11 +157,23 @@ button:hover {
 
 .graph_section_label {
     text-align: center;
+    /* background-color: white; */
+    /* box-shadow: 0px 1px 5px black; */
+    padding: 5px;
+    width: 50px;
+    border-radius!important: 5px;
+    font-weight: 700;
+}
+
+#graph_deaths_label {
+    position: relative;
+    top: -90px; 
 }
 
 #graph_recovered_label {
     position: relative;
-    top -100px; 
+    top: 10px; 
+    color: var(--recovered-color);
 }
 
 .graphBar {
@@ -203,7 +226,8 @@ button:hover {
 .halfWidthFrame {
     display: inline-block;
     width: 47%;
-    margin: 10px; 
+    min-width: 450px;
+    margin: 10px auto; 
     height: 300px;
     background-color: rgba(244, 244, 244,0.7);
     border-radius: 5px;
@@ -214,10 +238,16 @@ button:hover {
     display: inline-block;
     height: 350px;
     width: 48%;
+    min-width: 450px;
     margin: 10px auto;
     padding: 5px;
     background-color: rgba(244, 244, 244,0.7);
     border-radius: 5px;
+}
+
+#graph_deaths_label {
+    position: relative;
+    top - 70px;
 }
 
 .graphCanvas {
@@ -261,6 +291,7 @@ button:hover {
             <select id='countryDropdown' onchange='retreiveCountryData(this.value);'>
                 <option value=''> --- Select --- </option>
             </select>
+            <div id='statusMessage'></div>
             <!-- <input type="text" id='searchBox' class="search" placeholder="Just show me..." > -->
             <!-- <button onclick="searchAndDisplay(document.getElementById('searchBox').value);" type='button'>Submit</button> -->
             <ul class="suggestions">
@@ -331,6 +362,10 @@ button:hover {
         }
 
         function getData() {
+            document.getElementById('statusMessage').style.opacity = '1';
+            if(document.getElementById('countryDropdown').value !== '') {
+                retreiveCountryData(document.getElementById('countryDropdown').value);
+            } else {
             lastData = JSON.parse(localStorage.getItem('covid19_general'));
             document.getElementById('headerCountry').innerHTML = 'The World';
             fetch('https://covid19.mathdro.id/api')
@@ -339,12 +374,18 @@ button:hover {
             })
             .then((myJson) => {
                 covid19 = myJson;
+                if(lastData !== null) {
+                    if( covid19.lastUpdate == lastData.lastUpdate ) {
+                        document.getElementById('statusMessage').innerHTML = 'No change since last update';
+                        document.getElementById('statusMessage').style.opacity = '1';
+                    }
+                }
                 localStorage.setItem('covid19_general', JSON.stringify(covid19));
             })
             .then(function() {
                 init();
             });
-        
+            }
         }
         
         function composeTable(myJson) {
@@ -354,7 +395,7 @@ button:hover {
 
 function fillInFields(data) {
     timeNow = new Date();
-    console.log(timeNow);
+    //console.log(timeNow);
     document.getElementById('lastUpdatedValue').innerHTML = new Date(data.lastUpdate);
     document.getElementById('currentConfirmedValue').innerHTML = numberWithCommas(data.confirmed.value);
     document.getElementById('currentOutstandingValue').innerHTML = numberWithCommas( data.confirmed.value - (data.deaths.value + data.recovered.value) );
@@ -370,41 +411,52 @@ function updateGraph(data) {
         remainderWidth = (Number(data.confirmed.value) - Number(data.deaths.value) - Number(data.recovered.value) ) / Number(data.confirmed.value) * 100;
 
     }
-    console.log(remainderWidth);
+    //console.log(remainderWidth);
     if(data.deaths.value > 0) {
         deathsWidth = Number(data.deaths.value) / Number(data.confirmed.value) * 100;
     }
-    console.log(deathsWidth);
+    //console.log(deathsWidth);
     if(data.recovered.value > 0) {
         recoveryWidth = Number(data.recovered.value) / Number(data.confirmed.value) * 100;
     }
 
-    console.log(recoveryWidth);
+    //console.log(recoveryWidth);
 
     document.getElementById('graph_remainder').style.width = `${remainderWidth}%`;
     document.getElementById('graph_deaths').style.width = `${deathsWidth}%`;
     document.getElementById('graph_recovered').style.width = `${recoveryWidth}%`;
-    document.getElementById('graph_deaths_label').innerHTML = `${deathsWidth.toFixed(1)}%`;
-    document.getElementById('graph_recovered_label').innerHTML = `${recoveryWidth.toFixed(1)}%`;
+    document.getElementById('graph_deaths_label').innerHTML = `Deaths: ${deathsWidth.toFixed(1)}%`;
+    document.getElementById('graph_recovered_label').innerHTML = `Recovered: ${recoveryWidth.toFixed(1)}%`;
     
 }
 
 function retreiveCountryData(country) {
-            fetch(`https://covid19.mathdro.id/api/countries/${country}`)
+            document.getElementById('statusMessage').style.opacity = '0';
+            if(country === '') {
+                composeTable(JSON.parse(localStorage.getItem('covid19_general')));
+            } else {
+                fetch(`https://covid19.mathdro.id/api/countries/${country}`)
                 .then((response) => {
                 return response.json();
             })
             .then((myJson) => {
                 countryInfo = myJson;
-                storageItem = 'countryData' + country
-                localStorage.setItem(storageItem, JSON.stringify(countryInfo));
-                console.log(localStorage.getItem(storageItem));
+                if(localStorage.getItem('countryData' + country) !== null) {
+                    if( countryInfo.lastUpdate == JSON.parse(localStorage.getItem('countryData' + country)).lastUpdate ) {
+                        document.getElementById('statusMessage').innerHTML = 'No change since last update';
+                        document.getElementById('statusMessage').style.opacity = '1';
+                    }
+                }
+                localStorage.setItem('countryData' + country, JSON.stringify(countryInfo));
                 fillInFields(countryInfo);
                 updateGraph(countryInfo);
                 document.getElementById('headerCountry').innerHTML = country;
-            }).catch(function(error) {
+            })
+            .catch(function(error) {
+                console.log(error);
                 alert("No data for this country, I guess they're safe for now?");
             });
+                }
 }
 
 function buildDailyData() {
@@ -516,16 +568,11 @@ function getListOfCountries() {
             })
             .then((myJson) => {
                     for (const [key, value] of Object.entries(myJson.countries)) {
-                        console.log(key,value);
+                        //console.log(key,value);
                         document.getElementById('countryDropdown').innerHTML += `<option value='${value}'>${key}</option>`
                 }
             })
-            .then(function() {
-                listOfCountries.forEach(country => {
-                    console.log(country);
-                })
-
-            }).catch(function(error) {
+            .catch(function(error) {
                 console.error(error);
             });
 }
