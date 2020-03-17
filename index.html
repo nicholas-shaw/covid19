@@ -388,7 +388,7 @@ function retreiveCountryData(country) {
                 fillInFields(countryInfo);
                 updateGraph(countryInfo);
             }).catch(function(error) {
-                console.error(error);
+                alert("No data for this country, I guess they're safe for now?");
             });
 }
 
