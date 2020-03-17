@@ -332,6 +332,7 @@ button:hover {
 
         function getData() {
             lastData = JSON.parse(localStorage.getItem('covid19_general'));
+            document.getElementById('headerCountry').innerHTML = 'The World';
             fetch('https://covid19.mathdro.id/api')
                 .then((response) => {
                 return response.json();
