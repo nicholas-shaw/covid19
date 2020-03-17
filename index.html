@@ -382,7 +382,7 @@ button:hover {
                 covid19 = myJson;
                 if(lastData !== null) {
                     if( covid19.lastUpdate == lastData.lastUpdate ) {
-                        document.getElementById('statusMessage').innerHTML = 'No change since last update';
+                        document.getElementById('statusMessage').innerHTML = 'No change since you last refreshed';
                         document.getElementById('statusMessage').style.opacity = '1';
                     }
                 }
@@ -449,7 +449,7 @@ function retreiveCountryData(country) {
                 countryInfo = myJson;
                 if(localStorage.getItem('countryData' + country) !== null) {
                     if( countryInfo.lastUpdate == JSON.parse(localStorage.getItem('countryData' + country)).lastUpdate ) {
-                        document.getElementById('statusMessage').innerHTML = 'No change since last update';
+                        document.getElementById('statusMessage').innerHTML = 'No change since you last refreshed';
                         document.getElementById('statusMessage').style.opacity = '1';
                     }
                 }
