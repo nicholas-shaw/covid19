@@ -1,4 +1,4 @@
-<html>
+\<html>
 <head>
     <title>My Corona</title>
 
@@ -450,6 +450,7 @@ function updateGraph(data) {
 function retreiveCountryData(country) {
     document.getElementById('statusMessage').style.opacity = '0';
             if(country === '') {
+                document.getElementById('percentOfPopulation').innerHTML = '';
                 document.getElementById('countryInfoSection').style.display = 'none';
                 document.getElementById('headerCountry').innerHTML = 'the world';
                 composeTable(JSON.parse(localStorage.getItem('covid19_general')));
