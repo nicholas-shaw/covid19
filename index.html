@@ -295,7 +295,7 @@ button:hover {
         <form class="search-form" onSubmit="return false">
             You can choose to update these graphs for a specific country: 
             <select id='countryDropdown' onchange='retreiveCountryData(this.value);'>
-                <option value=''> --- Select --- </option>
+                <option value=''> --- The world --- </option>
             </select>
             <div id='statusMessage'></div>
             <!-- <input type="text" id='searchBox' class="search" placeholder="Just show me..." > -->
@@ -373,7 +373,7 @@ button:hover {
                 retreiveCountryData(document.getElementById('countryDropdown').value);
             } else {
             lastData = JSON.parse(localStorage.getItem('covid19_general'));
-            document.getElementById('headerCountry').innerHTML = 'The World';
+            document.getElementById('headerCountry').innerHTML = 'the world';
             fetch('https://covid19.mathdro.id/api')
                 .then((response) => {
                 return response.json();
