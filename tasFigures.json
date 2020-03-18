@@ -1,1 +1,17 @@
-{confirmed:"10",recovered:"1",deaths:"0",population:"515000"}
+[
+ {"reportDate":20200319,"confirmed":"10","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200318,"confirmed":"10","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200317,"confirmed":"7","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200316,"confirmed":"7","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200315,"confirmed":"7","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200314,"confirmed":"5","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200313,"confirmed":"4","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200312,"confirmed":"3","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200311,"confirmed":"2","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200310,"confirmed":"2","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200309,"confirmed":"2","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200308,"confirmed":"2","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200307,"confirmed":"1","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200306,"confirmed":"1","recovered":"1","deaths":"0",contractedWithinTas:"0"},
+ {"reportDate":20200305,"confirmed":"0","recovered":"1","deaths":"0",contractedWithinTas:"0"}
+]
