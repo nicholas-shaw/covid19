@@ -1,4 +1,4 @@
-\<html>
+<html>
 <head>
     <title>My Corona</title>
 
@@ -282,6 +282,11 @@ button:hover {
   }
 }
 
+#countryFlag {
+    float: left;
+    padding-right: 10px;
+}
+
 </style>
 </head>
 <body onload='init();'>
@@ -306,9 +311,16 @@ button:hover {
     </form>
     <div id='countryInfoSection'>
         <img id='countryFlag' src='' width="100px"/>
+        <div id='countryRegion'>
+            <b>Region: </b><span id='countryRegionValue'></span>
+        </div>
+        
         <div id='countryPopulation'>
             <b>Population: </b><span id='populationValue'></span>
         </div>
+        <!-- <div id='incomeLevel'>
+            <b>Income level: </b><span id='incomeLevelValue'></span>
+        </div> -->
     </div>
     <div>
         <div class='halfWidthFrame'>
@@ -468,7 +480,17 @@ function retreiveCountryData(country) {
                 fillInFields(countryInfo);
                 updateGraph(countryInfo);
                 document.getElementById('headerCountry').innerHTML = country;
-            }).then(function() {
+            })
+            // .then(function() {
+            //     fetch(`http://api.worldbank.org/v2/country/${country}?format=json`)
+            //         .then((response) => {
+            //             return response.json();
+            //         })
+            //         .then((countryData) => {
+            //             document.getElementById('incomeLevelValue').innerHTML = countryData[1][0].incomeLevel.value;
+            //         })
+            // })
+            .then(function() {
                 fetch(`https://restcountries.eu/rest/v2/alpha/` + country)
                     .then((response) => {
                         return response.json();
@@ -476,6 +498,7 @@ function retreiveCountryData(country) {
                     .then((countryData) => {
                         console.log(countryData);
                         document.getElementById('countryFlag').src = countryData.flag;
+                        document.getElementById('countryRegionValue').innerHTML = countryData.region;
                         document.getElementById('populationValue').innerHTML = numberWithCommas(countryData.population);
                         document.getElementById('countryInfoSection').style.display = 'block';
                         document.getElementById('percentOfPopulation').innerHTML = `, ${((Number(countryInfo.confirmed.value)/Number(countryData.population))*100).toFixed(5)}% of population`;
