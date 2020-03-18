@@ -67,6 +67,7 @@ button:hover {
     /* padding: 20px; */
     color: white;
     box-shadow: 0px 0px 3px black;
+    z-index: 100;
 }
 
 #header > img {
@@ -265,11 +266,12 @@ button:hover {
 }
 
 #footer {
-    
+    font-size: 8px;
     width: 100%;
     color: black;
     margin-top: 20px;
     padding: 5px;
+    text-align: center;
     }
     
 #footer a {
@@ -289,10 +291,10 @@ button:hover {
 
 </style>
 </head>
-<body onload='init();'>
+<body onload='getData();'>
 
     <div id='header'>
-        <button id='refreshButton' onClick="dataSet = getData();">Refresh data</button>
+        <button id='refreshButton' onClick="getData();">Refresh data</button>
         <img src='https://nicklespickles.github.io/covid19/coronaHeader.png' />
     </div>
 
@@ -373,7 +375,7 @@ button:hover {
         <h1>Lastest Covid-19 news from ABC Australia</h1>
         <iframe id='abcVideoFrame' width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLn2RjxYNpcaxMHvBJO_G0ewKWoLokCeOB" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     <div id='footer'>
-        <p>Data source thanks to <a href='https://mathdro.id/' target='_blank'>Mathdroid</a></p>
+        <p>Data source: John Hopkins University Centre for Systems Science and Engineering, via <a href='https://mathdro.id/' target='_blank'>Mathdroid</a></p>
         </div>
     </div>
 
@@ -635,6 +637,7 @@ function getListOfCountries() {
 //FIX EVERYTHING WHERE THERE'S AN ERROR GETTING DATA, OR THE DATA IS AT 0 (deaths or recovery for eg).
 //FIX TITLES AND MAKE THEM FLEXIBLE ENOUGH TO CATER FOR 0 OR SMALL VALUES - Move title for deaths above perhaps?
 //INCLUDE COUNTRY POPULATION TO SEE % IMPACTED?
+        //Temp zones? Population density
 
         </script>
 
