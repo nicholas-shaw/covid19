@@ -489,7 +489,7 @@ function retreiveCountryData(country) {
                         document.getElementById('countryFlag').src = countryData.flag;
                         document.getElementById('populationValue').innerHTML = numberWithCommas(countryData.population);
                         document.getElementById('countryInfoSection').style.display = 'block';
-                        document.getElementById('percentOfPopulation').innerHTML = `, ${((Number(countryInfo.confirmed.value)/Number(countryData.population))*100).toFixed(3)}% of population`;
+                        document.getElementById('percentOfPopulation').innerHTML = `, ${((Number(countryInfo.confirmed.value)/Number(countryData.population))*100).toFixed(5)}% of population`;
                     })
             })
             .catch(function(error) {
