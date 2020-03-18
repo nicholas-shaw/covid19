@@ -440,6 +440,7 @@ function updateGraph(data) {
 function retreiveCountryData(country) {
             document.getElementById('statusMessage').style.opacity = '0';
             if(country === '') {
+                document.getElementById('headerCountry').innerHTML = 'the world';
                 composeTable(JSON.parse(localStorage.getItem('covid19_general')));
             } else {
                 fetch(`https://covid19.mathdro.id/api/countries/${country}`)
