@@ -309,9 +309,6 @@ button:hover {
         <div id='countryPopulation'>
             <b>Population: </b><span id='populationValue'></span>
         </div>
-        <div id='incomeLevel'>
-            <b>Income level: </b><span id='incomeLevelValue'></span>
-        </div>
     </div>
     <div>
         <div class='halfWidthFrame'>
@@ -471,14 +468,6 @@ function retreiveCountryData(country) {
                 fillInFields(countryInfo);
                 updateGraph(countryInfo);
                 document.getElementById('headerCountry').innerHTML = country;
-            }).then(function() {
-                fetch(`http://api.worldbank.org/v2/country/${country}?format=json`)
-                    .then((response) => {
-                        return response.json();
-                    })
-                    .then((countryData) => {
-                        document.getElementById('incomeLevelValue').innerHTML = countryData[1][0].incomeLevel.value;
-                    })
             }).then(function() {
                 fetch(`https://restcountries.eu/rest/v2/alpha/` + country)
                     .then((response) => {
