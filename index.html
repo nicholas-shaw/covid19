@@ -1,645 +1,685 @@
-<html>
-<head>
-    <title>My Corona</title>
+    <html>
+    <head>
+        <title>My Corona</title>
 
-    <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js'></script>
+        <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js'></script>
 
-    <script>
-        
+        <script>
+            
 
-        function init() {
-            document.getElementById('countryInfoSection').style.display = 'none';
-            dataSet = JSON.parse(localStorage.getItem('covid19_general'));
-            //console.log('dataSet: ' + dataSet)
-            composeTable(dataSet, 0);
-            getListOfCountries();
-            buildDailyData();            
-        }
-
-    </script>
-
-<style>
-
-    :root {
-        --outerTableRounding: 5px;
-        --main-color: #778065;
-        --death-color: black;
-        --neutral-color: #FBFAFA;
-        --recovered-color: #A8B400;
-        --action-color: #62959F;
-        --dark-brand: #25232F;
-        --box-shadow-default: 0px 1px 3px rgba(0,0,0,0.3);
-    }
-
-    body, html {
-        background-color:#d6dbd5;
-        margin: 0px;
-        padding: 0px;
-        font-family: sans-serif;
-        letter-spacing: -1px;
-    }
-
-h1 {
-    padding: 20px 20px 0px 20px;
-}
-
-button {
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: none;
-    background-color: purple;
-    color: white;
-}
-
-button:hover {
-    background-color: white;
-    color: purple;
-    cursor: pointer;
-}
-
-#header{
-    background-color: #1c2a01;
-    margin: 0px;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    /* padding: 20px; */
-    color: white;
-    box-shadow: 0px 0px 3px black;
-    z-index: 100;
-}
-
-#header > img {
-    position: relative;
-    left: -200px;
-}
-
-#container {
-    padding: 20px;
-    padding-top: 150px;
-    max-width: 1100px;
-    width: 80%;
-    margin: 10px auto;
-    display: grid;
-    grid-column-gap: 0px;
-    grid-row-gap: 0px; 
-}
-
-#refreshButton {
-    position: fixed;
-    top: 50px;
-    left: 40px;
-    margin: 10px auto;
-    width: 200px;
-    z-index: 20;
-}
-
-#statusMessage {
-    opacity: 0;
-    text-align: center;
-    width: 50%;
-    margin: 5px auto;
-    background-color: white;
-    border: 2px solid #daa04b;
-    padding: 5px;
-    transition: all 1s ease-in-out;
-}
-
-#lastUpdated {
-    padding: 5px;
-    text-align: center;
-}
-
-#currentConfirmed {
-    margin: 10px auto;
-    text-align: center;
-    padding: 5px;
-}
-
-#currentConfirmedValue {
-    margin: 5px auto;
-    height: 200px;
-    border: 10px solid white;
-    width: 200px;
-    border-radius: 110px;
-    background-color: var(--main-color);
-    color: white;
-    line-height: 200px;
-    font-size: 35px;
-    font-weight: 700;
-    text-align: center;
-    box-shadow: var(--box-shadow-default);
-
-}
-
-#currentDeaths, #currentRecovery, #currentOutstanding {
-    font-size: 20px;
-    padding: 20px 20px;
-}
-
-#graph_total {
-    display: flex;  
-    max-width: 900px;
-    height: 50px;
-    margin: 50px auto;
-}
-
-#graph_total > div {
-    display: inline-block;
-}
-
-.graph_section {
-    height: 50px;
-    margin: 0px;
-    color: white;
-    font-size: 10px;
-
-}
-
-.graph_section_label {
-    text-align: center;
-    /* background-color: white; */
-    /* box-shadow: 0px 1px 5px black; */
-    padding: 5px;
-    width: 50px;
-    border-radius!important: 5px;
-    font-weight: 700;
-}
-
-#graph_deaths_label {
-    position: relative;
-    top: -90px; 
-}
-
-#graph_recovered_label {
-    position: relative;
-    top: 10px; 
-    color: var(--recovered-color);
-}
-
-.graphBar {
-    transition: all 2s ease-in-out;
-}
-
-#graphRow, #graphLabels {
-    width: 100%;
-}
-
-#graphRow div {
-    display: inline-block;
-    border: 10px solid white;
-    border-collapse: collapse;
-    box-shadow: var(--box-shadow-default);
-    overflow: hidden;
-
-}
-
-#graph_total {
-    border: 10px solid white;
-    border-radius: 40px;
-    box-shadow: var(--box-shadow-default);
-}
-
-#graph_total > div:nth-child(1) > div {
-    border-top-left-radius: 45px;
-    border-bottom-left-radius: 45px;
-    border-right: 0px;
-}
-
-#graph_total > div:nth-last-child(1) > div {
-    border-top-right-radius: 45px;
-    border-bottom-right-radius: 45px;
-    border-left: 10px;
-}
-
-#graph_remainder > div:nth-child(1) {
-    background-color: var(--main-color);
-}
-
-#graph_deaths > div:nth-child(1)  {
-    background-color: var(--dark-brand);
-}
-
-#graph_recovered > div:nth-child(1)  {
-    background-color: var(--recovered-color);
-}
-
-.halfWidthFrame {
-    display: inline-block;
-    width: 47%;
-    min-width: 450px;
-    margin: 10px auto; 
-    height: 300px;
-    background-color: rgba(244, 244, 244,0.7);
-    border-radius: 5px;
-    vertical-align: top;
-}
-
-.graphSection {
-    display: inline-block;
-    height: 350px;
-    width: 48%;
-    min-width: 450px;
-    margin: 10px auto;
-    padding: 5px;
-    background-color: rgba(244, 244, 244,0.7);
-    border-radius: 5px;
-}
-
-#graph_deaths_label {
-    position: relative;
-    top - 70px;
-}
-
-.graphCanvas {
-    margin 10px auto;
-}
-
-#countryDropdown {
-    margin: 10px auto;
-    padding: 5px;
-}
-
-#abcVideoFrame {
-    margin: 0px auto;
-}
-
-#footer {
-    font-size: 12px;
-    width: 100%;
-    color: black;
-    margin-top: 20px;
-    padding: 5px;
-    text-align: center;
-    }
-    
-#footer a {
-    color: black;
-    }
-    
-    @media only screen and (max-width: 1146px) {
-    .halfWidthFrame, .graphSection {
-        display: block;
-  }
-}
-
-#countryFlag {
-    float: left;
-    padding-right: 10px;
-}
-
-</style>
-</head>
-<body onload='init();'>
-
-    <div id='header'>
-        <button id='refreshButton' onClick="getData();">Refresh data</button>
-        <img src='https://nicklespickles.github.io/covid19/coronaHeader.png' />
-    </div>
-
-    <div id='container'>
-        <h1>Data for <span id='headerCountry'>the world</span></h1>
-        <form class="search-form" onSubmit="return false">
-            You can choose to update these graphs for a specific country: 
-            <select id='countryDropdown' onchange='retreiveCountryData(this.value);'>
-                <option value=''> --- The world --- </option>
-            </select>
-            <div id='statusMessage'></div>
-            <!-- <input type="text" id='searchBox' class="search" placeholder="Just show me..." > -->
-            <!-- <button onclick="searchAndDisplay(document.getElementById('searchBox').value);" type='button'>Submit</button> -->
-            <ul class="suggestions">
-            </ul>
-    </form>
-    <div id='countryInfoSection'>
-        <img id='countryFlag' src='' width="100px"/>
-        <div id='countryRegion'>
-            <b>Region: </b><span id='countryRegionValue'></span>
-        </div>
-        
-        <div id='countryPopulation'>
-            <b>Population: </b><span id='populationValue'></span>
-        </div>
-        <!-- <div id='incomeLevel'>
-            <b>Income level: </b><span id='incomeLevelValue'></span>
-        </div> -->
-    </div>
-    <div>
-        <div class='halfWidthFrame'>
-            <div id='currentConfirmed'>
-                <div id='currentConfirmedValue'></div>
-                <span>Confirmed cases<span id='percentOfPopulation'></span></span>
-            </div>
-        </div>
-        <div class='halfWidthFrame'>
-            <h1>Breakdown</h1>
-            <div id='currentOutstanding'>
-                <b>Confirmed ongoing: </b><span id='currentOutstandingValue'></span>
-            </div>
-            <div id='currentDeaths'>
-                <b>Deaths: </b><span id='currentDeathsValue'></span>
-            </div>
-            <div id='currentRecovery'>
-                <b>Recovered: </b><span id='currentRecoveryValue'></span>
-            </div>
-        </div>
-    </div>
-
-        <div id='graphContainer'>
-            <div id='graph_total'>
-                <div class='graphBar' id='graph_remainder'>
-                    <div class='graph_section' id='graph_remainder'></div>
-                    <div class='graph_section_label' id='graph_remainder_label'>&nbsp;</div>
-                </div>
-                <div class='graphBar' id='graph_deaths'>
-                        <div class='graph_section' id=''>DEATHS</div>
-                        <div class='graph_section_label' id='graph_deaths_label'></div>
-                </div>
-                <div class='graphBar' id='graph_recovered'>
-                        <div class='graph_section' id=''>RECOVERED</div>
-                        <div class='graph_section_label' id='graph_recovered_label'></div>
-                </div>
-            </div>
-        </div>
-        <div id='lastUpdated'><b>Data last updated at:</b> <span id='lastUpdatedValue'></span></div>
-        <h1>World data - day-by-day charts</h1>
-        <div class='graphContainer'>
-            <div class='graphSection'>
-                <canvas class='graphCanvas' id='countrySplitGraph'></canvas>
-            </div>
-            <div class='graphSection'>
-                <canvas class='graphCanvas' id='totalConfirmedGraph'></canvas>
-            </div>
-        </div>
-
-        <h1>Lastest Covid-19 news from ABC Australia</h1>
-        <iframe id='abcVideoFrame' width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLn2RjxYNpcaxMHvBJO_G0ewKWoLokCeOB" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    <div id='footer'>
-        <p>Data source: John Hopkins University Centre for Systems Science and Engineering, via <a href='https://mathdro.id/' target='_blank'>Mathdroid</a></p>
-        </div>
-    </div>
-
-    <script> 
-
-        let covid19 = [];
-        let listOfCountries = [];
-
-        function numberWithCommas(x) {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
-
-        function getData() {
-            document.getElementById('statusMessage').style.opacity = '0';
-            if(document.getElementById('countryDropdown').value !== '') {
-                retreiveCountryData(document.getElementById('countryDropdown').value);
-            } else {
-            lastData = JSON.parse(localStorage.getItem('covid19_general'));
-            document.getElementById('headerCountry').innerHTML = 'the world';
-            fetch('https://covid19.mathdro.id/api')
-                .then((response) => {
-                return response.json();
-            })
-            .then((myJson) => {
-                covid19 = myJson;
-                if(lastData !== null) {
-                    if( covid19.lastUpdate == lastData.lastUpdate ) {
-                        document.getElementById('statusMessage').innerHTML = 'No change since you last refreshed';
-                        document.getElementById('statusMessage').style.opacity = '1';
-                    }
-                }
-                localStorage.setItem('covid19_general', JSON.stringify(covid19));
-            })
-            .then(function() {
-                init();
-            });
-            }
-            return covid19;
-        }
-        
-        function composeTable(myJson) {
-            fillInFields(myJson);
-            updateGraph(myJson);
-        }
-
-function fillInFields(data) {
-    timeNow = new Date();
-    //console.log(timeNow);
-    document.getElementById('lastUpdatedValue').innerHTML = new Date(data.lastUpdate);
-    document.getElementById('currentConfirmedValue').innerHTML = numberWithCommas(data.confirmed.value);
-    document.getElementById('currentOutstandingValue').innerHTML = numberWithCommas( data.confirmed.value - (data.deaths.value + data.recovered.value) );
-    document.getElementById('currentDeathsValue').innerHTML = numberWithCommas(data.deaths.value);
-    document.getElementById('currentRecoveryValue').innerHTML = numberWithCommas(data.recovered.value);
-}
-
-function updateGraph(data) {
-    let remainderWidth = 0;
-    let deathsWidth = 0;
-    let recoveryWidth = 0;
-    if(data.confirmed.value > 0) {
-        remainderWidth = (Number(data.confirmed.value) - Number(data.deaths.value) - Number(data.recovered.value) ) / Number(data.confirmed.value) * 100;
-
-    }
-    //console.log(remainderWidth);
-    if(data.deaths.value > 0) {
-        deathsWidth = Number(data.deaths.value) / Number(data.confirmed.value) * 100;
-    }
-    //console.log(deathsWidth);
-    if(data.recovered.value > 0) {
-        recoveryWidth = Number(data.recovered.value) / Number(data.confirmed.value) * 100;
-    }
-
-    //console.log(recoveryWidth);
-
-    document.getElementById('graph_remainder').style.width = `${remainderWidth}%`;
-    document.getElementById('graph_deaths').style.width = `${deathsWidth}%`;
-    document.getElementById('graph_recovered').style.width = `${recoveryWidth}%`;
-    document.getElementById('graph_deaths_label').innerHTML = `Deaths: ${deathsWidth.toFixed(1)}%`;
-    document.getElementById('graph_recovered_label').innerHTML = `Recovered: ${recoveryWidth.toFixed(1)}%`;
-    
-}
-
-function retreiveCountryData(country) {
-    document.getElementById('statusMessage').style.opacity = '0';
-            if(country === '') {
-                document.getElementById('percentOfPopulation').innerHTML = '';
+            function init() {
                 document.getElementById('countryInfoSection').style.display = 'none';
-                document.getElementById('headerCountry').innerHTML = 'the world';
-                composeTable(JSON.parse(localStorage.getItem('covid19_general')));
-            } else {
-                fetch(`https://covid19.mathdro.id/api/countries/${country}`)
-                .then((response) => {
-                return response.json();
-            })
-            .then((myJson) => {
-                countryInfo = myJson;
-                if(localStorage.getItem('countryData' + country) !== null) {
-                    if( countryInfo.lastUpdate == JSON.parse(localStorage.getItem('countryData' + country)).lastUpdate ) {
-                        document.getElementById('statusMessage').innerHTML = 'No change since you last refreshed';
-                        document.getElementById('statusMessage').style.opacity = '1';
-                    }
-                }
-                localStorage.setItem('countryData' + country, JSON.stringify(countryInfo));
-                fillInFields(countryInfo);
-                updateGraph(countryInfo);
-                document.getElementById('headerCountry').innerHTML = country;
-            })
-            // .then(function() {
-            //     fetch(`http://api.worldbank.org/v2/country/${country}?format=json`)
-            //         .then((response) => {
-            //             return response.json();
-            //         })
-            //         .then((countryData) => {
-            //             document.getElementById('incomeLevelValue').innerHTML = countryData[1][0].incomeLevel.value;
-            //         })
-            // })
-            .then(function() {
-                fetch(`https://restcountries.eu/rest/v2/alpha/` + country)
-                    .then((response) => {
-                        return response.json();
-                    })
-                    .then((countryData) => {
-                        console.log(countryData);
-                        document.getElementById('countryFlag').src = countryData.flag;
-                        document.getElementById('countryRegionValue').innerHTML = countryData.region;
-                        document.getElementById('populationValue').innerHTML = numberWithCommas(countryData.population);
-                        document.getElementById('countryInfoSection').style.display = 'block';
-                        document.getElementById('percentOfPopulation').innerHTML = `, ${((Number(countryInfo.confirmed.value)/Number(countryData.population))*100).toFixed(5)}% of population`;
-                    })
-            })
-            .catch(function(error) {
-                console.log(error);
-                alert("No data for this country, I guess they're safe for now?");
-            });
-                }
-}
-
-function buildDailyData() {
-    const dates = [];
-    const outside = [];
-    const chinaCount = [];
-    const notChina = [];
-    const totalConfirmed = [];
-    const totalRecovered = [];
-    fetch('https://covid19.mathdro.id/api/daily')
-                .then((response) => {
-                return response.json();
-            })
-            .then((myJson) => {
-                myJson.forEach(daily => {
-                    dates.push(`${daily.reportDateString}`)
-                    outside.push(`${daily.otherLocations}`);
-                    chinaCount.push(`${daily.mainlandChina}`);
-                    notChina.push(`${daily.totalConfirmed-daily.mainlandChina}`);
-                    totalConfirmed.push(`${daily.totalConfirmed-daily.totalRecovered}`);
-                    totalRecovered.push(`${daily.totalRecovered}`);
-                // (const [key, value] of Object.entries(myJson.countries)) {
-                //         console.log(key,value);
-                //         document.getElementById('countryDropdown').innerHTML += `<option value='${value}'>${key}</option>`
-                // }
-            })
-            populateDailyGraph('countrySplitGraph',dates,chinaCount,'Mainland China',outside,'Outside China');
-            populateDailyGraph('totalConfirmedGraph',dates,totalConfirmed,'Confirmed, not yet resolved',totalRecovered,'Recovered');
-        });
-}
-
-function populateDailyGraph(graph,dates,firstData,firstLabel,secondData,secondLabel) {
-    var ctx = document.getElementById(`${graph}`).getContext('2d');
-    var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: dates,
-        datasets: [{
-            label: firstLabel,
-            backgroundColor: '#778065',
-            data: firstData,
-        },{
-            label: secondLabel,
-            backgroundColor: '#A8B400',
-            data: secondData,
-        }],
-    }, 
-options: {
-    tooltips: {
-      displayColors: true,
-      callbacks:{
-        mode: 'x',
-      },
-    },
-    scales: {
-      xAxes: [{
-        stacked: true,
-        gridLines: {
-          display: false,
-        }
-      }],
-      yAxes: [{
-        stacked: true,
-        ticks: {
-          beginAtZero: true,
-        },
-        type: 'linear',
-      }]
-    },
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: { position: 'bottom' },
-    }
-});
-}
-
-function findMatches(wordToMatch, list) {
-  return list.filter(device => {
-    const regex = new RegExp(wordToMatch, 'gi');
-    return device.label.match(regex) || device.brand.match(regex)
-  });
-}
-
-function filterDupes(list) {
-    var newArray = [];
-     var lookupObject  = {};
-
-     for(var i in list) {
-        lookupObject[list[i]['label']] = list[i];
-     }
-
-     for(i in lookupObject) {
-         newArray.push(lookupObject[i]);
-     }
-      return newArray;
-}
-
-// function searchAndDisplay(term) {
-//     document.getElementById('listOfCards').innerHTML = '';
-//     let listOfMatches = filterDupes(findMatches(term,dataSet));
-//     createTable(listOfMatches,0);
-//     return false;
-// };
-
-function getListOfCountries() {
-            fetch('https://covid19.mathdro.id/api/countries')
-                .then((response) => {
-                return response.json();
-            })
-            .then((myJson) => {
-                    for (const [key, value] of Object.entries(myJson.countries)) {
-                        //console.log(key,value);
-                        document.getElementById('countryDropdown').innerHTML += `<option value='${value}'>${key}</option>`
-                }
-            })
-            .catch(function(error) {
-                console.error(error);
-            });
-}
-
-//TODO
-        //FIX SO THAT DATA IS FETCHED ON FIRST LOAD - CURRENTLY NEED TO PUSH THE BUTTON.
-//CORNERS ROUNDED ON PARENT ELEMENT FOR HTE GRAPH, NOT THE BITS
-//FIX EVERYTHING WHERE THERE'S AN ERROR GETTING DATA, OR THE DATA IS AT 0 (deaths or recovery for eg).
-//FIX TITLES AND MAKE THEM FLEXIBLE ENOUGH TO CATER FOR 0 OR SMALL VALUES - Move title for deaths above perhaps?
-//INCLUDE COUNTRY POPULATION TO SEE % IMPACTED?
+                dataSet = JSON.parse(localStorage.getItem('covid19_general'));
+                //console.log('dataSet: ' + dataSet)
+                composeTable(dataSet, 0);
+                getListOfCountries();
+                buildDailyData();  
+                getTasmanianFigures();          
+            }
 
         </script>
 
-</body>
+    <style>
 
-</html>
+        :root {
+            --outerTableRounding: 5px;
+            --main-color: #778065;
+            --death-color: black;
+            --neutral-color: #FBFAFA;
+            --recovered-color: #A8B400;
+            --action-color: #62959F;
+            --dark-brand: #25232F;
+            --box-shadow-default: 0px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        body, html {
+            background-color:#d6dbd5;
+            margin: 0px;
+            padding: 0px;
+            font-family: sans-serif;
+            letter-spacing: -1px;
+        }
+
+    h1 {
+        padding: 20px 20px 0px 20px;
+    }
+
+    button {
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: none;
+        background-color: purple;
+        color: white;
+    }
+
+    button:hover {
+        background-color: white;
+        color: purple;
+        cursor: pointer;
+    }
+
+    #header{
+        background-color: #1c2a01;
+        margin: 0px;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        /* padding: 20px; */
+        color: white;
+        box-shadow: 0px 0px 3px black;
+        z-index: 100;
+    }
+
+    #header > img {
+        position: relative;
+        left: -200px;
+    }
+
+    #container {
+        padding: 20px;
+        padding-top: 150px;
+        max-width: 1100px;
+        width: 80%;
+        margin: 10px auto;
+        display: grid;
+        grid-column-gap: 0px;
+        grid-row-gap: 0px; 
+    }
+
+    #refreshButton {
+        position: fixed;
+        top: 50px;
+        left: 40px;
+        margin: 10px auto;
+        width: 200px;
+        z-index: 20;
+    }
+
+    #statusMessage {
+        opacity: 0;
+        text-align: center;
+        width: 50%;
+        margin: 5px auto;
+        background-color: white;
+        border: 2px solid #daa04b;
+        padding: 5px;
+        transition: all 1s ease-in-out;
+    }
+
+    #lastUpdated {
+        padding: 5px;
+        text-align: center;
+    }
+
+    #currentConfirmed {
+        margin: 10px auto;
+        text-align: center;
+        padding: 5px;
+    }
+
+    #currentConfirmedValue {
+        margin: 5px auto;
+        height: 200px;
+        border: 10px solid white;
+        width: 200px;
+        border-radius: 110px;
+        background-color: var(--main-color);
+        color: white;
+        line-height: 200px;
+        font-size: 35px;
+        font-weight: 700;
+        text-align: center;
+        box-shadow: var(--box-shadow-default);
+
+    }
+
+    #currentDeaths, #currentRecovery, #currentOutstanding {
+        font-size: 20px;
+        padding: 20px 20px;
+    }
+
+    #graph_total {
+        display: flex;  
+        max-width: 900px;
+        height: 50px;
+        margin: 50px auto;
+    }
+
+    #graph_total > div {
+        display: inline-block;
+    }
+
+    .graph_section {
+        height: 50px;
+        margin: 0px;
+        color: white;
+        font-size: 10px;
+
+    }
+
+    .graph_section_label {
+        text-align: center;
+        /* background-color: white; */
+        /* box-shadow: 0px 1px 5px black; */
+        padding: 5px;
+        width: 50px;
+        border-radius!important: 5px;
+        font-weight: 700;
+    }
+
+    #graph_deaths_label {
+        position: relative;
+        top: -90px; 
+    }
+
+    #graph_recovered_label {
+        position: relative;
+        top: 10px; 
+        color: var(--recovered-color);
+    }
+
+    .graphBar {
+        transition: all 2s ease-in-out;
+    }
+
+    #graphRow, #graphLabels {
+        width: 100%;
+    }
+
+    #graphRow div {
+        display: inline-block;
+        border: 10px solid white;
+        border-collapse: collapse;
+        box-shadow: var(--box-shadow-default);
+        overflow: hidden;
+
+    }
+
+    #graph_total {
+        border: 10px solid white;
+        border-radius: 40px;
+        box-shadow: var(--box-shadow-default);
+    }
+
+    #graph_total > div:nth-child(1) > div {
+        border-top-left-radius: 45px;
+        border-bottom-left-radius: 45px;
+        border-right: 0px;
+    }
+
+    #graph_total > div:nth-last-child(1) > div {
+        border-top-right-radius: 45px;
+        border-bottom-right-radius: 45px;
+        border-left: 10px;
+    }
+
+    #graph_remainder > div:nth-child(1) {
+        background-color: var(--main-color);
+    }
+
+    #graph_deaths > div:nth-child(1)  {
+        background-color: var(--dark-brand);
+    }
+
+    #graph_recovered > div:nth-child(1)  {
+        background-color: var(--recovered-color);
+    }
+
+    .halfWidthFrame {
+        display: inline-block;
+        width: 47%;
+        min-width: 450px;
+        margin: 10px auto; 
+        height: 300px;
+        background-color: rgba(244, 244, 244,0.7);
+        border-radius: 5px;
+        vertical-align: top;
+    }
+
+    .graphSection {
+        display: inline-block;
+        height: 350px;
+        width: 48%;
+        min-width: 450px;
+        margin: 10px auto;
+        padding: 5px;
+        background-color: rgba(244, 244, 244,0.7);
+        border-radius: 5px;
+    }
+
+    #graph_deaths_label {
+        position: relative;
+        top - 70px;
+    }
+
+    .graphCanvas {
+        margin 10px auto;
+    }
+
+    #countryDropdown {
+        margin: 10px auto;
+        padding: 5px;
+    }
+
+    #abcVideoFrame {
+        margin: 0px auto;
+    }
+
+    #footer {
+        font-size: 8px;
+        width: 100%;
+        color: black;
+        margin-top: 20px;
+        padding: 5px;
+        text-align: center;
+        }
+        
+    #footer a {
+        color: black;
+        }
+        
+        @media only screen and (max-width: 1146px) {
+        .halfWidthFrame, .graphSection {
+            display: block;
+    }
+    }
+
+    #countryFlag {
+        float: left;
+        padding-right: 10px;
+    }
+
+    </style>
+    </head>
+    <body onload='init();'>
+
+        <div id='header'>
+            <button id='refreshButton' onClick="getData();">Refresh data</button>
+            <img src='https://nicklespickles.github.io/covid19/coronaHeader.png' />
+        </div>
+
+        <div id='container'>
+            <h1>Data for <span id='headerCountry'>the world</span></h1>
+            <form class="search-form" onSubmit="return false">
+                You can choose to update these graphs for a specific country: 
+                <select id='countryDropdown' onchange='retreiveCountryData(this.value);'>
+                    <option value=''> --- The world --- </option>
+                </select>
+                <div id='statusMessage'></div>
+                <!-- <input type="text" id='searchBox' class="search" placeholder="Just show me..." > -->
+                <!-- <button onclick="searchAndDisplay(document.getElementById('searchBox').value);" type='button'>Submit</button> -->
+                <ul class="suggestions">
+                </ul>
+        </form>
+        <div id='countryInfoSection'>
+            <img id='countryFlag' src='' width="100px"/>
+            <div id='countryRegion'>
+                <b>Region: </b><span id='countryRegionValue'></span>
+            </div>
+            
+            <div id='countryPopulation'>
+                <b>Population: </b><span id='populationValue'></span>
+            </div>
+            <!-- <div id='incomeLevel'>
+                <b>Income level: </b><span id='incomeLevelValue'></span>
+            </div> -->
+        </div>
+        <div>
+            <div class='halfWidthFrame'>
+                <div id='currentConfirmed'>
+                    <div id='currentConfirmedValue'></div>
+                    <span>Confirmed cases<span id='percentOfPopulation'></span></span>
+                </div>
+            </div>
+            <div class='halfWidthFrame'>
+                <h1>Breakdown</h1>
+                <div id='currentOutstanding'>
+                    <b>Confirmed ongoing: </b><span id='currentOutstandingValue'></span>
+                </div>
+                <div id='currentDeaths'>
+                    <b>Deaths: </b><span id='currentDeathsValue'></span>
+                </div>
+                <div id='currentRecovery'>
+                    <b>Recovered: </b><span id='currentRecoveryValue'></span>
+                </div>
+            </div>
+        </div>
+
+            <div id='graphContainer'>
+                <div id='graph_total'>
+                    <div class='graphBar' id='graph_remainder'>
+                        <div class='graph_section' id='graph_remainder'></div>
+                        <div class='graph_section_label' id='graph_remainder_label'>&nbsp;</div>
+                    </div>
+                    <div class='graphBar' id='graph_deaths'>
+                            <div class='graph_section' id=''>DEATHS</div>
+                            <div class='graph_section_label' id='graph_deaths_label'></div>
+                    </div>
+                    <div class='graphBar' id='graph_recovered'>
+                            <div class='graph_section' id=''>RECOVERED</div>
+                            <div class='graph_section_label' id='graph_recovered_label'></div>
+                    </div>
+                </div>
+            </div>
+            <div id='lastUpdated'><b>Data last updated at:</b> <span id='lastUpdatedValue'></span></div>
+            <h1>World data - day-by-day charts</h1>
+            <div class='graphContainer'>
+                <div class='graphSection'>
+                    <canvas class='graphCanvas' id='countrySplitGraph'></canvas>
+                </div>
+                <div class='graphSection'>
+                    <canvas class='graphCanvas' id='totalConfirmedGraph'></canvas>
+                </div>
+            </div>
+            <div id="tassieContainer">
+                <h1>Tasmanian Covid-19 cases</h1>
+                <div id='tassieIntro'>
+                    <p>Being in Tassie, local figures are of particular interest.<br />I've made my own data set based on press releases from <a href='https://www.dhhs.tas.gov.au/news/2020'>The Department of Health and Human Services</a>.</p>
+                </div>
+                <div id='tassieGraphSection' class='graphSection'>
+                    <canvas class='graphCanvas' id='tassieGraph'></canvas>
+                </div>
+            </div>
+            <h1>Lastest Covid-19 news from ABC Australia</h1>
+            <iframe id='abcVideoFrame' width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLn2RjxYNpcaxMHvBJO_G0ewKWoLokCeOB" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <div id='footer'>
+            <p>Data source: John Hopkins University Centre for Systems Science and Engineering, via <a href='https://mathdro.id/' target='_blank'>Mathdroid</a></p>
+            </div>
+        </div>
+
+        <script> 
+
+            const tasPopulation = 515000;
+
+
+            let covid19 = [];
+            let listOfCountries = [];
+
+            function numberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            function getData() {
+                document.getElementById('statusMessage').style.opacity = '0';
+                if(document.getElementById('countryDropdown').value !== '') {
+                    retreiveCountryData(document.getElementById('countryDropdown').value);
+                } else {
+                lastData = JSON.parse(localStorage.getItem('covid19_general'));
+                document.getElementById('headerCountry').innerHTML = 'the world';
+                fetch('https://covid19.mathdro.id/api')
+                    .then((response) => {
+                    return response.json();
+                })
+                .then((myJson) => {
+                    covid19 = myJson;
+                    if(lastData !== null) {
+                        if( covid19.lastUpdate == lastData.lastUpdate ) {
+                            document.getElementById('statusMessage').innerHTML = 'No change since you last refreshed';
+                            document.getElementById('statusMessage').style.opacity = '1';
+                        }
+                    }
+                    localStorage.setItem('covid19_general', JSON.stringify(covid19));
+                })
+                .then(function() {
+                    init();
+                });
+                }
+                return covid19;
+            }
+            
+            function composeTable(myJson) {
+                fillInFields(myJson);
+                updateGraph(myJson);
+            }
+
+    function fillInFields(data) {
+        timeNow = new Date();
+        //console.log(timeNow);
+        document.getElementById('lastUpdatedValue').innerHTML = new Date(data.lastUpdate);
+        document.getElementById('currentConfirmedValue').innerHTML = numberWithCommas(data.confirmed.value);
+        document.getElementById('currentOutstandingValue').innerHTML = numberWithCommas( data.confirmed.value - (data.deaths.value + data.recovered.value) );
+        document.getElementById('currentDeathsValue').innerHTML = numberWithCommas(data.deaths.value);
+        document.getElementById('currentRecoveryValue').innerHTML = numberWithCommas(data.recovered.value);
+    }
+
+    function updateGraph(data) {
+        let remainderWidth = 0;
+        let deathsWidth = 0;
+        let recoveryWidth = 0;
+        if(data.confirmed.value > 0) {
+            remainderWidth = (Number(data.confirmed.value) - Number(data.deaths.value) - Number(data.recovered.value) ) / Number(data.confirmed.value) * 100;
+
+        }
+        //console.log(remainderWidth);
+        if(data.deaths.value > 0) {
+            deathsWidth = Number(data.deaths.value) / Number(data.confirmed.value) * 100;
+        }
+        //console.log(deathsWidth);
+        if(data.recovered.value > 0) {
+            recoveryWidth = Number(data.recovered.value) / Number(data.confirmed.value) * 100;
+        }
+
+        //console.log(recoveryWidth);
+
+        document.getElementById('graph_remainder').style.width = `${remainderWidth}%`;
+        document.getElementById('graph_deaths').style.width = `${deathsWidth}%`;
+        document.getElementById('graph_recovered').style.width = `${recoveryWidth}%`;
+        document.getElementById('graph_deaths_label').innerHTML = `Deaths: ${deathsWidth.toFixed(1)}%`;
+        document.getElementById('graph_recovered_label').innerHTML = `Recovered: ${recoveryWidth.toFixed(1)}%`;
+        
+    }
+
+    function retreiveCountryData(country) {
+        document.getElementById('statusMessage').style.opacity = '0';
+                if(country === '') {
+                    document.getElementById('percentOfPopulation').innerHTML = '';
+                    document.getElementById('countryInfoSection').style.display = 'none';
+                    document.getElementById('headerCountry').innerHTML = 'the world';
+                    composeTable(JSON.parse(localStorage.getItem('covid19_general')));
+                } else {
+                    fetch(`https://covid19.mathdro.id/api/countries/${country}`)
+                    .then((response) => {
+                    return response.json();
+                })
+                .then((myJson) => {
+                    countryInfo = myJson;
+                    if(localStorage.getItem('countryData' + country) !== null) {
+                        if( countryInfo.lastUpdate == JSON.parse(localStorage.getItem('countryData' + country)).lastUpdate ) {
+                            document.getElementById('statusMessage').innerHTML = 'No change since you last refreshed';
+                            document.getElementById('statusMessage').style.opacity = '1';
+                        }
+                    }
+                    localStorage.setItem('countryData' + country, JSON.stringify(countryInfo));
+                    fillInFields(countryInfo);
+                    updateGraph(countryInfo);
+                    document.getElementById('headerCountry').innerHTML = country;
+                })
+                // .then(function() {
+                //     fetch(`http://api.worldbank.org/v2/country/${country}?format=json`)
+                //         .then((response) => {
+                //             return response.json();
+                //         })
+                //         .then((countryData) => {
+                //             document.getElementById('incomeLevelValue').innerHTML = countryData[1][0].incomeLevel.value;
+                //         })
+                // })
+                .then(function() {
+                    fetch(`https://restcountries.eu/rest/v2/alpha/` + country)
+                        .then((response) => {
+                            return response.json();
+                        })
+                        .then((countryData) => {
+                            console.log(countryData);
+                            document.getElementById('countryFlag').src = countryData.flag;
+                            document.getElementById('countryRegionValue').innerHTML = countryData.region;
+                            document.getElementById('populationValue').innerHTML = numberWithCommas(countryData.population);
+                            document.getElementById('countryInfoSection').style.display = 'block';
+                            document.getElementById('percentOfPopulation').innerHTML = `, ${((Number(countryInfo.confirmed.value)/Number(countryData.population))*100).toFixed(5)}% of population`;
+                        })
+                })
+                .catch(function(error) {
+                    console.log(error);
+                    alert("No data for this country, I guess they're safe for now?");
+                });
+                    }
+    }
+
+    function buildDailyData() {
+        const dates = [];
+        const outside = [];
+        const chinaCount = [];
+        const notChina = [];
+        const totalConfirmed = [];
+        const totalRecovered = [];
+        fetch('https://covid19.mathdro.id/api/daily')
+                    .then((response) => {
+                    return response.json();
+                })
+                .then((myJson) => {
+                    myJson.forEach(daily => {
+                        dates.push(Date.parse(`${daily.reportDateString}`));
+                        outside.push(`${daily.otherLocations}`);
+                        chinaCount.push(`${daily.mainlandChina}`);
+                        notChina.push(`${daily.totalConfirmed-daily.mainlandChina}`);
+                        totalConfirmed.push(`${daily.totalConfirmed-daily.totalRecovered}`);
+                        totalRecovered.push(`${daily.totalRecovered}`);
+                    // (const [key, value] of Object.entries(myJson.countries)) {
+                    //         console.log(key,value);
+                    //         document.getElementById('countryDropdown').innerHTML += `<option value='${value}'>${key}</option>`
+                    // }
+                })
+                populateDailyGraph('countrySplitGraph',dates,chinaCount,'Mainland China',outside,'Outside China');
+                populateDailyGraph('totalConfirmedGraph',dates,totalConfirmed,'Confirmed, not yet resolved',totalRecovered,'Recovered');
+            });
+    }
+
+    function populateDailyGraph(graph,dates,firstData,firstLabel,secondData,secondLabel) {
+        var ctx = document.getElementById(`${graph}`).getContext('2d');
+        var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: firstLabel,
+                backgroundColor: '#778065',
+                data: firstData,
+            },{
+                label: secondLabel,
+                backgroundColor: '#A8B400',
+                data: secondData,
+            }],
+        }, 
+    options: {
+        tooltips: {
+        displayColors: true,
+        callbacks:{
+            mode: 'x',
+        },
+        },
+        scales: {
+        xAxes: [{
+            stacked: true,
+            gridLines: {
+            display: false,
+            }
+        }],
+        yAxes: [{
+            stacked: true,
+            ticks: {
+            beginAtZero: true,
+            },
+            type: 'linear',
+        }]
+        },
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: { position: 'bottom' },
+        }
+    });
+    }
+
+    function findMatches(wordToMatch, list) {
+    return list.filter(device => {
+        const regex = new RegExp(wordToMatch, 'gi');
+        return device.label.match(regex) || device.brand.match(regex)
+    });
+    }
+
+    function filterDupes(list) {
+        var newArray = [];
+        var lookupObject  = {};
+
+        for(var i in list) {
+            lookupObject[list[i]['label']] = list[i];
+        }
+
+        for(i in lookupObject) {
+            newArray.push(lookupObject[i]);
+        }
+        return newArray;
+    }
+
+    // function searchAndDisplay(term) {
+    //     document.getElementById('listOfCards').innerHTML = '';
+    //     let listOfMatches = filterDupes(findMatches(term,dataSet));
+    //     createTable(listOfMatches,0);
+    //     return false;
+    // };
+
+    function getListOfCountries() {
+                fetch('https://covid19.mathdro.id/api/countries')
+                    .then((response) => {
+                    return response.json();
+                })
+                .then((myJson) => {
+                        for (const [key, value] of Object.entries(myJson.countries)) {
+                            //console.log(key,value);
+                            document.getElementById('countryDropdown').innerHTML += `<option value='${value}'>${key}</option>`
+                    }
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+    }
+
+    //TODO
+            //FIX SO THAT DATA IS FETCHED ON FIRST LOAD - CURRENTLY NEED TO PUSH THE BUTTON.
+    //CORNERS ROUNDED ON PARENT ELEMENT FOR HTE GRAPH, NOT THE BITS
+    //FIX EVERYTHING WHERE THERE'S AN ERROR GETTING DATA, OR THE DATA IS AT 0 (deaths or recovery for eg).
+    //FIX TITLES AND MAKE THEM FLEXIBLE ENOUGH TO CATER FOR 0 OR SMALL VALUES - Move title for deaths above perhaps?
+    //INCLUDE COUNTRY POPULATION TO SEE % IMPACTED?
+
+function getTasmanianFigures() {
+    const dates = [];
+    const confirmed = [];
+    const recovered = [];
+    const deaths = [];
+    const contractedWithinTas = [];
+    const totalRecovered = [];
+    fetch('https://nicklespickles.github.io/covid19/tasFigures.json')
+                    .then((response) => {
+                    return response.json();
+                })
+                .then((myJson) => {
+                    myJson.forEach(daily => {
+                        dates.push(`${daily.reportDate}`);
+                        confirmed.push(Number(`${daily.confirmed}`));
+                        recovered.push(Number(`${daily.recovered}`));
+                        deaths.push(Number(`${daily.deaths}`));
+                        contractedWithinTas.push(Number(`${daily.contractedWithinTas}`));
+                    });
+                    console.log(dates,confirmed,recovered,deaths,contractedWithinTas);
+                    populateDailyGraph('tassieGraph',dates.reverse(),confirmed.reverse(),'Confirmed',recovered.reverse(),'Recovered');
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+    
+}
+
+            </script>
+
+    </body>
+
+    </html>
