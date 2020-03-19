@@ -416,9 +416,9 @@
                 document.getElementById('statusMessage').style.opacity = '0';
                 if(document.getElementById('countryDropdown').value !== '') {
                     retreiveCountryData(document.getElementById('countryDropdown').value);
-                    ga('send', 'event', 'coronaPage', 'countrySelection', 'selectedCountry', document.getElementById('countryDropdown').value);
+                    gtag('event','click',{'event_category':'countrySelection','event_label':document.getElementById('countryDropdown').value})
                 } else {
-                    ga('send', 'event', 'coronaPage', 'refreshed', 'dataRefresh', 'refreshed');
+                    gtag('event','click',{'event_category':'countrySelection','event_label':'refreshedGlobal'})
                 lastData = JSON.parse(localStorage.getItem('covid19_general'));
                 document.getElementById('headerCountry').innerHTML = 'the world';
                 fetch('https://covid19.mathdro.id/api')
@@ -436,11 +436,7 @@
                     localStorage.setItem('covid19_general', JSON.stringify(covid19));
                 })
                 .then(function() {
-                    document.getElementById('countryInfoSection').style.display = 'none';
-                dataSet = JSON.parse(localStorage.getItem('covid19_general'));
-                //console.log('dataSet: ' + dataSet)
-                composeTable(dataSet, 0);
-                buildDailyData();  
+                    init();
                 });
                 }
                 return covid19;
