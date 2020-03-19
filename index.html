@@ -416,9 +416,8 @@
                 document.getElementById('statusMessage').style.opacity = '0';
                 if(document.getElementById('countryDropdown').value !== '') {
                     retreiveCountryData(document.getElementById('countryDropdown').value);
-                    gtag('event','click',{'event_category':'countrySelection','event_label':document.getElementById('countryDropdown').value})
                 } else {
-                    gtag('event','click',{'event_category':'countrySelection','event_label':'refreshedGlobal'})
+                    gtag('event','click',{'event_category':'countrySelection','event_label':'refreshedGlobal'});
                 lastData = JSON.parse(localStorage.getItem('covid19_general'));
                 document.getElementById('headerCountry').innerHTML = 'the world';
                 fetch('https://covid19.mathdro.id/api')
@@ -526,6 +525,7 @@
                             document.getElementById('countryInfoSection').style.display = 'block';
                             document.getElementById('percentOfPopulation').innerHTML = `, ${((Number(countryInfo.confirmed.value)/Number(countryData.population))*100).toFixed(5)}% of population`;
                         })
+                        gtag('event','click',{'event_category':'countrySelection','event_label':document.getElementById('countryDropdown').value});
                 })
                 .catch(function(error) {
                     console.log(error);
