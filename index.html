@@ -436,7 +436,12 @@
                     localStorage.setItem('covid19_general', JSON.stringify(covid19));
                 })
                 .then(function() {
-                    init();
+                    document.getElementById('countryInfoSection').style.display = 'none';
+                dataSet = JSON.parse(localStorage.getItem('covid19_general'));
+                //console.log('dataSet: ' + dataSet)
+                composeTable(dataSet, 0);
+                getListOfCountries();
+                buildDailyData();  
                 });
                 }
                 return covid19;
