@@ -465,16 +465,12 @@
             remainderWidth = (Number(data.confirmed.value) - Number(data.deaths.value) - Number(data.recovered.value) ) / Number(data.confirmed.value) * 100;
 
         }
-        //console.log(remainderWidth);
         if(data.deaths.value > 0) {
             deathsWidth = Number(data.deaths.value) / Number(data.confirmed.value) * 100;
         }
-        //console.log(deathsWidth);
         if(data.recovered.value > 0) {
             recoveryWidth = Number(data.recovered.value) / Number(data.confirmed.value) * 100;
         }
-
-        //console.log(recoveryWidth);
 
         document.getElementById('graph_remainder').style.width = `${remainderWidth}%`;
         document.getElementById('graph_deaths').style.width = `${deathsWidth}%`;
@@ -524,7 +520,6 @@
                             return response.json();
                         })
                         .then((countryData) => {
-                            console.log(countryData);
                             document.getElementById('countryFlag').src = countryData.flag;
                             document.getElementById('countryRegionValue').innerHTML = countryData.region;
                             document.getElementById('populationValue').innerHTML = numberWithCommas(countryData.population);
@@ -683,7 +678,6 @@ function getTasmanianFigures() {
                         deaths.push(Number(`${daily.deaths}`));
                         contractedWithinTas.push(Number(`${daily.contractedWithinTas}`));
                     });
-                    console.log(dates,confirmed,recovered,deaths,contractedWithinTas);
                     populateDailyGraph('tassieGraph',dates.reverse(),confirmed.reverse(),'Confirmed',recovered.reverse(),'Recovered');
                 })
                 .catch(function(error) {
