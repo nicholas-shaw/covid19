@@ -676,7 +676,7 @@ function getTasmanianFigures() {
                 .then((myJson) => {
                     myJson.forEach(daily => {
                         dates.push(`${daily.reportDate}`);
-                        confirmed.push(Number(`${daily.confirmed}`));
+                        confirmed.push(Number(`${daily.confirmed - daily.recovered}`));
                         recovered.push(Number(`${daily.recovered}`));
                         deaths.push(Number(`${daily.deaths}`));
                         contractedWithinTas.push(Number(`${daily.contractedWithinTas}`));
