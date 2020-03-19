@@ -416,9 +416,9 @@
                 document.getElementById('statusMessage').style.opacity = '0';
                 if(document.getElementById('countryDropdown').value !== '') {
                     retreiveCountryData(document.getElementById('countryDropdown').value);
-                    ga('send', 'event', 'coronaPage', 'countrySelection', document.getElementById('countryDropdown').value);
+                    ga('send', 'event', 'coronaPage', 'countrySelection', 'selectedCountry', document.getElementById('countryDropdown').value);
                 } else {
-                    ga('send', 'event', 'coronaPage', 'refreshed', 'refreshed');
+                    ga('send', 'event', 'coronaPage', 'refreshed', 'dataRefresh', 'refreshed');
                 lastData = JSON.parse(localStorage.getItem('covid19_general'));
                 document.getElementById('headerCountry').innerHTML = 'the world';
                 fetch('https://covid19.mathdro.id/api')
