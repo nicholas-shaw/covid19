@@ -1,8 +1,8 @@
 [
- {"reportDate":"March 19, 2020","confirmed":"10","recovered":"1","deaths":"0","contractedWithinTas":"0"},
- {"reportDate":"March 18, 2020","confirmed":"10","recovered":"1","deaths":"0","contractedWithinTas":"0"},
+ {"reportDate":"March 19, 2020","confirmed":"10","recovered":"3","deaths":"0","contractedWithinTas":"0"},
+ {"reportDate":"March 18, 2020","confirmed":"10","recovered":"3","deaths":"0","contractedWithinTas":"0"},
  {"reportDate":"March 17, 2020","confirmed":"7","recovered":"1","deaths":"0","contractedWithinTas":"0"},
- {"reportDate":"March 16, 2020","confirmed":"7","recovered":"0","deaths":"0","contractedWithinTas":"0"},
+ {"reportDate":"March 16, 2020","confirmed":"7","recovered":"1","deaths":"0","contractedWithinTas":"0"},
  {"reportDate":"March 15, 2020","confirmed":"7","recovered":"0","deaths":"0","contractedWithinTas":"0"},
  {"reportDate":"March 14, 2020","confirmed":"5","recovered":"0","deaths":"0","contractedWithinTas":"0"},
  {"reportDate":"March 13, 2020","confirmed":"4","recovered":"0","deaths":"0","contractedWithinTas":"0"},
