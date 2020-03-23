@@ -419,13 +419,6 @@
                 </div>
                 <div id='stateTableContainer' class='halfWidthFrame'>
                     <table class='figuresTable' id='stateFigures'>
-                        <tr>
-                            <td>State</td>
-                            <td>Active</td>
-                            <td>Deaths</td>
-                            <td>Recovered</td>
-                            <td>Total</td>
-                        </tr>
                     </table>
                 </div>
             </div>
@@ -755,6 +748,15 @@ function getStateFigures() {
                     return response.json();
                 })
                 .then((myJson) => {
+                    document.getElementById('stateFigures').innerHTML = `
+                        <tr>
+                            <td>State</td>
+                            <td>Active</td>
+                            <td>Deaths</td>
+                            <td>Recovered</td>
+                            <td>Total</td>
+                        </tr>
+                    `;
                     myJson.forEach(dataLine => {
                         if(dataLine.countryRegion === 'Australia') {
                             states.push(dataLine.provinceState);
