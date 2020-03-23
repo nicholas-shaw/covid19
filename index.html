@@ -303,6 +303,33 @@
         padding-right: 10px;
     }
 
+    #stateTableContainer {
+        min-height: 360px;
+    }
+
+    .figuresTable {
+        padding: 40px 20px;
+        margin: 0px auto;
+        border-collapse: collapse;
+    }
+
+    .figuresTable td:nth-child(n+2) {
+        text-align: center; 
+    }
+
+    .figuresTable > tbody:nth-child(even) {
+        background-color: #ccc;
+    }
+
+
+    .figuresTable td {
+        padding: 5px;
+    }
+
+    .figuresTable > tbody:nth-child(1) {
+        font-weight: 700;
+    }
+
     </style>
     </head>
     <body onload='init();'>
@@ -389,6 +416,17 @@
             <div class='graphContainer'>
                 <div class='graphSection'>
                     <canvas class='graphCanvas' id='stateGraph'></canvas>
+                </div>
+                <div id='stateTableContainer' class='halfWidthFrame'>
+                    <table class='figuresTable' id='stateFigures'>
+                        <tr>
+                            <td>State</td>
+                            <td>Active</td>
+                            <td>Deaths</td>
+                            <td>Recovered</td>
+                            <td>Total</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
 
@@ -723,6 +761,15 @@ function getStateFigures() {
                             active.push(dataLine.active);
                             deaths.push(dataLine.deaths);
                             recovered.push(dataLine.recovered);
+                            document.getElementById('stateFigures').innerHTML += `
+                                <tr>
+                                    <td>${dataLine.provinceState}</td>
+                                    <td>${dataLine.active}</td>
+                                    <td>${dataLine.deaths}</td>
+                                    <td>${dataLine.recovered}</td>
+                                    <td>${dataLine.confirmed}</td>
+                                </tr>
+                            `;
                         }
                     });
                     console.log(states,active,deaths,recovered);    
