@@ -1,4 +1,4 @@
-    <html>
+<html>
     <head>
         <title>My Corona</title>
 
@@ -27,6 +27,7 @@
                 getListOfCountries();
                 buildDailyData();  
                 getTasmanianFigures();          
+                getStateFigures();
             }
 
         </script>
@@ -384,6 +385,13 @@
                     <canvas class='graphCanvas' id='totalConfirmedGraph'></canvas>
                 </div>
             </div>
+            <h1>Australia - the state of the states</h1>
+            <div class='graphContainer'>
+                <div class='graphSection'>
+                    <canvas class='graphCanvas' id='stateGraph'></canvas>
+                </div>
+            </div>
+
             <div id="tassieContainer">
                 <h1>Tasmanian Covid-19 cases</h1>
                 <div id='tassieIntro'>
@@ -563,7 +571,13 @@
             });
     }
 
-    function populateDailyGraph(graph,dates,firstData,firstLabel,secondData,secondLabel) {
+    function chartSection(data, label, color) {
+        this.data = data;
+    this.label = label;
+    this.color = color;
+    }
+
+    function populateDailyGraph(graph,dates,firstData,firstLabel,secondData,secondLabel,thirdData,thirdLabel) {
         var ctx = document.getElementById(`${graph}`).getContext('2d');
         var myChart = new Chart(ctx, {
         type: 'bar',
@@ -577,6 +591,10 @@
                 label: secondLabel,
                 backgroundColor: '#A8B400',
                 data: secondData,
+            },{
+                label: thirdLabel,
+                backgroundColor: '#var(--dark-brand)',
+                data: thirdData,
             }],
         }, 
     options: {
@@ -606,6 +624,7 @@
             legend: { position: 'bottom' },
         }
     });
+            
     }
 
     function findMatches(wordToMatch, list) {
@@ -686,6 +705,34 @@ function getTasmanianFigures() {
     
 }
 
+
+function getStateFigures() {
+    const stateData = [];
+    const states = [];
+    const active = [];
+    const recovered = [];
+    const deaths = [];
+    fetch('https://covid19.mathdro.id/api/confirmed')
+                    .then((response) => {
+                    return response.json();
+                })
+                .then((myJson) => {
+                    myJson.forEach(dataLine => {
+                        if(dataLine.countryRegion === 'Australia') {
+                            states.push(dataLine.provinceState);
+                            active.push(dataLine.active);
+                            deaths.push(dataLine.deaths);
+                            recovered.push(dataLine.recovered);
+                        }
+                    });
+                    console.log(states,active,deaths,recovered);    
+                    populateDailyGraph('stateGraph',states,active,'Active',recovered,'Recovered',deaths,'Deaths');
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+    
+}
             </script>
 
     </body>
