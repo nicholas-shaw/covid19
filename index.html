@@ -608,9 +608,52 @@
     this.color = color;
     }
 
-    function populateDailyGraph(graph,dates,firstData,firstLabel,secondData,secondLabel,thirdLabel,thirdData) {
+    function populateDailyGraph(graph,dates,firstData,firstLabel,secondData,secondLabel,thirdData,thirdLabel) {
         var ctx = document.getElementById(`${graph}`).getContext('2d');
-        var myChart = new Chart(ctx, {
+        if(thirdLabel === undefined) {
+            var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: firstLabel,
+                    backgroundColor: '#778065',
+                    data: firstData,
+                },{
+                    label: secondLabel,
+                    backgroundColor: '#A8B400',
+                    data: secondData,
+                }],
+            }, 
+            options: {
+                tooltips: {
+                displayColors: true,
+                callbacks:{
+                    mode: 'x',
+                },
+                },
+                scales: {
+                xAxes: [{
+                    stacked: true,
+                    gridLines: {
+                    display: false,
+                    }
+                }],
+                yAxes: [{
+                    stacked: true,
+                    ticks: {
+                    beginAtZero: true,
+                    },
+                    type: 'linear',
+                }]
+                },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: { position: 'bottom' },
+                }
+            });
+        } else {
+            var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: dates,
@@ -655,6 +698,7 @@
             legend: { position: 'bottom' },
         }
     });
+        }
             
     }
 
@@ -692,15 +736,16 @@
                     return response.json();
                 })
                 .then((myJson) => {
-                        for (const [key, value] of Object.entries(myJson.countries)) {
-                            //console.log(key,value);
-                            document.getElementById('countryDropdown').innerHTML += `<option value='${value}'>${key}</option>`
-                    }
+                        myJson.countries.forEach(country => {
+                                document.getElementById('countryDropdown').innerHTML += `<option value='${country.iso2}'>${country.name}</option>`
+                            })
                 })
                 .catch(function(error) {
                     console.error(error);
                 });
     }
+
+
 
     //TODO
             //FIX SO THAT DATA IS FETCHED ON FIRST LOAD - CURRENTLY NEED TO PUSH THE BUTTON.
@@ -757,6 +802,7 @@ function getStateFigures() {
                             <td>Total</td>
                         </tr>
                     `;
+                    console.log(myJson);
                     myJson.forEach(dataLine => {
                         if(dataLine.countryRegion === 'Australia') {
                             states.push(dataLine.provinceState);
