@@ -586,7 +586,7 @@
                 })
                 .then((myJson) => {
                     myJson.forEach(daily => {
-                        dates.push(`${daily.reportDateString}`);
+                        dates.push(`${daily.reportDate}`);
                         outside.push(`${daily.otherLocations}`);
                         chinaCount.push(`${daily.mainlandChina}`);
                         notChina.push(`${daily.totalConfirmed-daily.mainlandChina}`);
@@ -608,7 +608,7 @@
     this.color = color;
     }
 
-    function populateDailyGraph(graph,dates,firstData,firstLabel,secondData,secondLabel,thirdData,thirdLabel) {
+    function populateDailyGraph(graph,dates,firstData,firstLabel,secondData,secondLabel,thirdLabel,thirdData) {
         var ctx = document.getElementById(`${graph}`).getContext('2d');
         var myChart = new Chart(ctx, {
         type: 'bar',
@@ -624,7 +624,7 @@
                 data: secondData,
             },{
                 label: thirdLabel,
-                backgroundColor: '#var(--dark-brand)',
+                backgroundColor: '#25232F',
                 data: thirdData,
             }],
         }, 
