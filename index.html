@@ -36,6 +36,7 @@
 
         :root {
             --outerTableRounding: 5px;
+            --background-color: #d6dbd5;
             --main-color: #778065;
             --death-color: black;
             --neutral-color: #FBFAFA;
@@ -46,7 +47,7 @@
         }
 
         body, html {
-            background-color:#d6dbd5;
+            background-color: var(--background-color);
             margin: 0px;
             padding: 0px;
             font-family: sans-serif;
@@ -90,14 +91,22 @@
     }
 
     #container {
+        position: relative;
         padding: 20px;
         padding-top: 150px;
-        max-width: 1100px;
-        width: 80%;
-        margin: 10px auto;
+        width: 100vw;
         display: grid;
         grid-column-gap: 0px;
         grid-row-gap: 0px; 
+        min-height: 100vh;
+        background-color: var(--background-color);
+        z-index: 10;
+    }
+
+    #main {
+        width: 80%;
+        max-width: 1100px;
+        margin: 10px auto;
     }
 
     #refreshButton {
@@ -280,18 +289,28 @@
     }
 
     #footer {
-        font-size: 8px;
-        width: 100%;
-        color: black;
+        min-height: 200px;
+        position: sticky;   
+        bottom: 0;
+        left: 0;
+        font-size: 12px;
+        width: 100vw;
+        color: white;
         margin-top: 20px;
         padding: 5px;
         text-align: center;
+        z-index: 5;
+        background-color: var(--dark-brand);
         }
         
     #footer a {
-        color: black;
+        color: white;
         }
         
+        #footer > img {
+            height: 50px;
+        }
+
         @media only screen and (max-width: 1146px) {
         .halfWidthFrame, .graphSection {
             display: block;
@@ -364,7 +383,9 @@
         </div>
 
         <div id='container'>
-            <h1>Data for <span id='headerCountry'>the world</span></h1>
+
+            <div id='main'>
+<h1>Data for <span id='headerCountry'>the world</span></h1>
             <form class="search-form" onSubmit="return false">
                 You can choose to update these graphs for a specific country: 
                 <select id='countryDropdown' onchange='retreiveCountryData(this.value);'>
@@ -458,11 +479,17 @@
             </div>
             <h1>Lastest Covid-19 news from ABC Australia</h1>
             <iframe id='abcVideoFrame' width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLn2RjxYNpcaxMHvBJO_G0ewKWoLokCeOB" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <div id='footer'>
-            <p>Data source: John Hopkins University Centre for Systems Science and Engineering, via <a href='https://mathdro.id/' target='_blank'>Mathdroid</a></p>
-            </div>
-        </div>
 
+            </div>
+            
+        </div>
+        <div id='footer'>
+
+            <p>&nbsp;</p>
+            <img src='headerLogo_color.png' />
+            <p>Data source for global, country and state data: John Hopkins University Centre for Systems Science and Engineering, via <a href='https://mathdro.id/' target='_blank'>Mathdroid's API</a></p>
+            <p>Data source for state day-by-day: <a href='https://www.dhhs.tas.gov.au/news/2020'>The Department of Health and Human Services</a>, compiled by me (Nicholas Shaw) daily</p> 
+            </div>
         <script> 
 
             const tasPopulation = 515000;
