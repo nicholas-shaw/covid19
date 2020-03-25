@@ -28,6 +28,8 @@
                 buildDailyData();  
                 getTasmanianFigures();          
                 getStateFigures();
+                document.getElementsByClassName('lds-ellipsis')[0].style.display = 'none';
+                document.getElementById('main').style.display = 'block';
             }
 
         </script>
@@ -38,11 +40,12 @@
             --outerTableRounding: 5px;
             --background-color: #d6dbd5;
             --main-color: #778065;
-            --death-color: black;
+
             --neutral-color: #FBFAFA;
             --recovered-color: #A8B400;
             --action-color: #62959F;
             --dark-brand: #25232F;
+            --footer-color: #4C5267;
             --box-shadow-default: 0px 1px 3px rgba(0,0,0,0.3);
         }
 
@@ -104,6 +107,7 @@
     }
 
     #main {
+        display: none;
         width: 80%;
         max-width: 1100px;
         margin: 10px auto;
@@ -248,6 +252,15 @@
         background-color: var(--recovered-color);
     }
 
+    #countryInfoSection {
+        display: flex;
+        padding: 20px;
+    }
+
+    #countryInfoSection > * {
+        padding: 5px;
+    }
+
     .halfWidthFrame {
         display: inline-block;
         width: 47%;
@@ -294,13 +307,12 @@
         bottom: 0;
         left: 0;
         font-size: 12px;
-        width: 100vw;
+        width: 100%;
         color: white;
-        margin-top: 20px;
         padding: 5px;
         text-align: center;
         z-index: 5;
-        background-color: var(--dark-brand);
+        background-color: var(--footer-color);
         }
         
     #footer a {
@@ -373,6 +385,67 @@
         }
     }
 
+/* START Imported loading dots */
+
+.lds-ellipsis {
+    display: inline-block;
+    position: relative;
+    margin: 30px auto;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-ellipsis div {
+    position: absolute;
+    top: 33px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #fff;
+    animation-timing-function: cubic-bezier(0, 1, 1, 0);
+  }
+  .lds-ellipsis div:nth-child(1) {
+    left: 8px;
+    animation: lds-ellipsis1 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(2) {
+    left: 8px;
+    animation: lds-ellipsis2 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(3) {
+    left: 32px;
+    animation: lds-ellipsis2 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(4) {
+    left: 56px;
+    animation: lds-ellipsis3 0.6s infinite;
+  }
+  @keyframes lds-ellipsis1 {
+    0% {
+      transform: scale(0);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes lds-ellipsis3 {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(0);
+    }
+  }
+  @keyframes lds-ellipsis2 {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(24px, 0);
+    }
+  }
+
+  /* END Imported loading dots */
+
     </style>
     </head>
     <body onload='init();'>
@@ -383,6 +456,13 @@
         </div>
 
         <div id='container'>
+
+            <div class="lds-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
 
             <div id='main'>
 <h1>Data for <span id='headerCountry'>the world</span></h1>
@@ -503,6 +583,7 @@
             }
 
             function getData() {
+                document.getElementsByClassName('lds-ellipsis')[0].style.display = 'block';
                 document.getElementById('statusMessage').style.opacity = '0';
                 if(document.getElementById('countryDropdown').value !== '') {
                     retreiveCountryData(document.getElementById('countryDropdown').value);
@@ -612,7 +693,7 @@
                             document.getElementById('countryFlag').src = countryData.flag;
                             document.getElementById('countryRegionValue').innerHTML = countryData.region;
                             document.getElementById('populationValue').innerHTML = numberWithCommas(countryData.population);
-                            document.getElementById('countryInfoSection').style.display = 'block';
+                            document.getElementById('countryInfoSection').style.display = 'flex';
                             document.getElementById('percentOfPopulation').innerHTML = `, ${((Number(countryInfo.confirmed.value)/Number(countryData.population))*100).toFixed(5)}% of population`;
                         })
                         gtag('event','click',{'event_category':'countrySelection','event_label':document.getElementById('countryDropdown').value});
