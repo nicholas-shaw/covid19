@@ -347,6 +347,10 @@
             width: 100%!important;
             font-size: 24px;
         }
+
+        .graphCanvas {
+            height: 450px;
+        }
     }
 
     #countryFlag {
@@ -427,6 +431,29 @@
         }
 
     }
+
+.accordionHeader {
+    padding: 40px 20px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background-color: #f4f4f4;
+}
+
+.accordionHeader:hover {
+    cursor: pointer;
+    background-color: #eee;
+}
+
+.accordionBody {
+    height: 0px;
+    overflow: hidden;
+    transition: height 2s ease-in-out;
+}
+
+.accordionOpen {
+    height: auto;
+    transition: height 2s ease-in-out;
+}
 
 /* START Imported loading dots */
 
@@ -572,11 +599,17 @@
             </div>
             <div id='lastUpdated'><b>Data last updated at:</b> <span id='lastUpdatedValue'></span></div>
             <h1>List of countries</h1>
-            <table id='countryTable'>
-                <tbody id='countriesInTable'>
-
-                </tbody>
-            </table>
+            <p>This is quite a long list, we're planning on making it sortable, and filterable in the future</p>
+            <div class='accordionHeader' onClick='toggleAccordion(this);'>
+                List of countries
+                <div class='accordionBody'>
+                    <table id='countryTable'>
+                        <tbody id='countriesInTable'>
+        
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <h1>World data - day-by-day charts</h1>
             <div class='graphContainer'>
                 <div class='graphSection'>
@@ -632,6 +665,10 @@
                 return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             }
 
+            function toggleAccordion(element) {
+                element.querySelector('.accordionBody').classList.toggle('accordionOpen');
+            }
+
             function getData() {
                 document.getElementsByClassName('lds-ellipsis')[0].style.display = 'block';
                 document.getElementById('statusMessage').style.opacity = '0';
@@ -674,12 +711,11 @@
         document.getElementById('currentOutstandingValue').innerHTML = numberWithCommas( data.confirmed.value - (data.deaths.value + data.recovered.value) );
         document.getElementById('currentDeathsValue').innerHTML = numberWithCommas(data.deaths.value);
         document.getElementById('currentRecoveryValue').innerHTML = numberWithCommas(data.recovered.value);
-        console.log(oldData);
         if(oldData !== null && oldData !== undefined &&  oldData !== '') {
             if(oldData.confirmed !== null || oldData.confirmed !== undefined || oldData.confirmed !== '')
-            document.getElementById('figuresLastOngoing').innerHTML = `, &#8593; ${numberWithCommas( (data.confirmed.value - (data.deaths.value + data.recovered.value)) - (oldData.confirmed.value - (oldData.deaths.value + oldData.recovered.value)) )} since you last viewed`;
-            document.getElementById('figuresLastDeaths').innerHTML = `, &#8593; ${numberWithCommas(data.deaths.value -  oldData.deaths.value)} since you last viewed`;
-            document.getElementById('figuresLastRecovery').innerHTML = `, &#8593; ${numberWithCommas(data.recovered.value -  oldData.recovered.value)} since you last viewed`;
+            document.getElementById('figuresLastOngoing').innerHTML = `, changed ${numberWithCommas( (data.confirmed.value - (data.deaths.value + data.recovered.value)) - (oldData.confirmed.value - (oldData.deaths.value + oldData.recovered.value)) )} since you last viewed`;
+            document.getElementById('figuresLastDeaths').innerHTML = `, changed ${numberWithCommas(data.deaths.value -  oldData.deaths.value)} since you last viewed`;
+            document.getElementById('figuresLastRecovery').innerHTML = `, changed ${numberWithCommas(data.recovered.value -  oldData.recovered.value)} since you last viewed`;
         } else {
             document.getElementById('figuresLastOngoing').innerHTML = '';
             document.getElementById('figuresLastDeaths').innerHTML = '';
@@ -1014,7 +1050,6 @@ function getStateFigures() {
                         </tr>
                     `;
                     myJson.forEach(dataLine => {
-                        console.log(countryData[dataLine.countryRegion] !== undefined)
                         if(countryData[dataLine.countryRegion] !== undefined) {
                             countryData[dataLine.countryRegion]['confirmed'] += Number(dataLine.confirmed);
                             countryData[dataLine.countryRegion]['active'] += Number(dataLine.active);
@@ -1028,8 +1063,6 @@ function getStateFigures() {
                             'recovered':Number(dataLine.recovered)
                             }});
                         }
-                        console.log(countryData);
-
                         if(dataLine.countryRegion === 'Australia') {
                             states.push(dataLine.provinceState);
                             active.push(dataLine.active);
@@ -1066,9 +1099,6 @@ function getStateFigures() {
                                 </tr>
                             `;
                     })
-
-                    console.log(sortedCountries);
-
                     populateDailyGraph('stateGraph',states,active,'Active',recovered,'Recovered',deaths,'Deaths');
                 })
                 .catch(function(error) {
