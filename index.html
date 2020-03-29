@@ -18,17 +18,13 @@
 
         <script>
             
-
             function init() {
                 document.getElementById('countryInfoSection').style.display = 'none';
-                dataSet = JSON.parse(localStorage.getItem('covid19_general'));
-                //console.log('dataSet: ' + dataSet)
-                composeTable(dataSet, 0);
                 getListOfCountries();
+                getData();
                 buildDailyData();  
                 getTasmanianFigures();          
                 getStateFigures();
-                document.getElementsByClassName('lds-ellipsis')[0].style.display = 'none';
                 document.getElementById('main').style.display = 'block';
             }
 
@@ -38,9 +34,8 @@
 
         :root {
             --outerTableRounding: 5px;
-            --background-color: #d6dbd5;
+            --background-color: #e2e9e0;
             --main-color: #778065;
-
             --neutral-color: #FBFAFA;
             --recovered-color: #A8B400;
             --action-color: #62959F;
@@ -55,10 +50,15 @@
             padding: 0px;
             font-family: sans-serif;
             letter-spacing: -1px;
+            font-size: 18px;
         }
 
     h1 {
-        padding: 20px 20px 0px 20px;
+        padding: 80px 20px 0px 20px;
+    }
+
+    h2 {
+        padding: 10px 20px; 
     }
 
     button {
@@ -180,7 +180,7 @@
         height: 50px;
         margin: 0px;
         color: white;
-        font-size: 10px;
+        font-size: 12px;
 
     }
 
@@ -306,7 +306,7 @@
         position: sticky;   
         bottom: 0;
         left: 0;
-        font-size: 12px;
+        font-size: 14px;
         width: 100%;
         color: white;
         padding: 5px;
@@ -321,17 +321,49 @@
         
         #footer > img {
             height: 50px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 10px;
         }
 
         @media only screen and (max-width: 1146px) {
+
+        body {
+            font-size: 2em;
+        }
+
+        .graph_section_label {
+            display: none;
+        }
+
         .halfWidthFrame, .graphSection {
             display: block;
+            width: 100%;
+            padding: 5px;
     }
     }
 
     #countryFlag {
         float: left;
+        max-height: 70px;
         padding-right: 10px;
+    }
+
+    #countryTable {
+        width: 60%;
+        margin: 5px auto;
+        border-collapse: collapse;
+        background-color: white;
+    }
+
+    #countryTable > tbody > tr:nth-child(1){
+        font-weight: 700;
+    }
+
+    #countryTable  td{
+        width: 100%;
+        border: 1px solid #ccc;
+        padding: 5px;
     }
 
     #stateTableContainer {
@@ -344,11 +376,11 @@
         border-collapse: collapse;
     }
 
-    .figuresTable td:nth-child(n+2) {
+    .figuresTable > tbody > tr > td:nth-child(n+2) {
         text-align: center; 
     }
 
-    .figuresTable > tbody:nth-child(even) {
+    .figuresTable > tbody > tr:nth-child(even) {
         background-color: #ccc;
     }
 
@@ -357,7 +389,7 @@
         padding: 5px;
     }
 
-    .figuresTable > tbody:nth-child(1) {
+    .figuresTable > tbody > tr:nth-child(1) {
         font-weight: 700;
     }
 
@@ -383,6 +415,7 @@
         .graphSection {
             width: 100%;
         }
+
     }
 
 /* START Imported loading dots */
@@ -451,7 +484,6 @@
     <body onload='init();'>
 
         <div id='header'>
-            <button id='refreshButton' onClick="getData();">Refresh data</button>
             <img src='https://nicklespickles.github.io/covid19/coronaHeader.png' />
         </div>
 
@@ -468,7 +500,7 @@
 <h1>Data for <span id='headerCountry'>the world</span></h1>
             <form class="search-form" onSubmit="return false">
                 You can choose to update these graphs for a specific country: 
-                <select id='countryDropdown' onchange='retreiveCountryData(this.value);'>
+                <select id='countryDropdown' onchange='getData();'>
                     <option value=''> --- The world --- </option>
                 </select>
                 <div id='statusMessage'></div>
@@ -496,17 +528,18 @@
                     <div id='currentConfirmedValue'></div>
                     <span>Confirmed cases<span id='percentOfPopulation'></span></span>
                 </div>
+                <span id='figuresLastConfirmed'></span>
             </div>
             <div class='halfWidthFrame'>
-                <h1>Breakdown</h1>
+                <h2>Breakdown</h2>
                 <div id='currentOutstanding'>
-                    <b>Confirmed ongoing: </b><span id='currentOutstandingValue'></span>
+                    <b>Confirmed ongoing: </b><span id='currentOutstandingValue'></span><span id='figuresLastOngoing'></span>
                 </div>
                 <div id='currentDeaths'>
-                    <b>Deaths: </b><span id='currentDeathsValue'></span>
+                    <b>Deaths: </b><span id='currentDeathsValue'></span><span id='figuresLastDeaths'></span>
                 </div>
                 <div id='currentRecovery'>
-                    <b>Recovered: </b><span id='currentRecoveryValue'></span>
+                    <b>Recovered: </b><span id='currentRecoveryValue'></span><span id='figuresLastRecovery'></span>
                 </div>
             </div>
         </div>
@@ -528,6 +561,12 @@
                 </div>
             </div>
             <div id='lastUpdated'><b>Data last updated at:</b> <span id='lastUpdatedValue'></span></div>
+            <h1>List of countries</h1>
+            <table id='countryTable'>
+                <tbody id='countriesInTable'>
+
+                </tbody>
+            </table>
             <h1>World data - day-by-day charts</h1>
             <div class='graphContainer'>
                 <div class='graphSection'>
@@ -543,7 +582,8 @@
                     <canvas class='graphCanvas' id='stateGraph'></canvas>
                 </div>
                 <div id='stateTableContainer' class='halfWidthFrame'>
-                    <table class='figuresTable' id='stateFigures'>
+                    <table class='figuresTable'>
+                        <tbody id='stateFigures'></tbody>
                     </table>
                 </div>
             </div>
@@ -589,7 +629,8 @@
                     retreiveCountryData(document.getElementById('countryDropdown').value);
                 } else {
                     gtag('event','click',{'event_category':'countrySelection','event_label':'refreshedGlobal'});
-                lastData = JSON.parse(localStorage.getItem('covid19_general'));
+
+                const lastData = JSON.parse(localStorage.getItem('covid19_general_old'));
                 document.getElementById('headerCountry').innerHTML = 'the world';
                 fetch('https://covid19.mathdro.id/api')
                     .then((response) => {
@@ -603,21 +644,19 @@
                             document.getElementById('statusMessage').style.opacity = '1';
                         }
                     }
-                    localStorage.setItem('covid19_general', JSON.stringify(covid19));
+                    localStorage.setItem('covid19_general_old', localStorage.getItem('covid19_general_new'));
+                    localStorage.setItem('covid19_general_new', JSON.stringify(covid19));
+                    document.getElementById('percentOfPopulation').innerHTML = '';
+                    document.getElementById('countryInfoSection').style.display = 'none';
+                    document.getElementById('headerCountry').innerHTML = 'the world';
+                    fillInFields(JSON.parse(localStorage.getItem('covid19_general_new')),lastData);
+                    updateGraph(JSON.parse(localStorage.getItem('covid19_general_new')));
                 })
-                .then(function() {
-                    init();
-                });
                 }
-                return covid19;
-            }
-            
-            function composeTable(myJson) {
-                fillInFields(myJson);
-                updateGraph(myJson);
+                document.getElementsByClassName('lds-ellipsis')[0].style.display = 'none';
             }
 
-    function fillInFields(data) {
+    function fillInFields(data, oldData) {
         timeNow = new Date();
         //console.log(timeNow);
         document.getElementById('lastUpdatedValue').innerHTML = new Date(data.lastUpdate);
@@ -625,6 +664,18 @@
         document.getElementById('currentOutstandingValue').innerHTML = numberWithCommas( data.confirmed.value - (data.deaths.value + data.recovered.value) );
         document.getElementById('currentDeathsValue').innerHTML = numberWithCommas(data.deaths.value);
         document.getElementById('currentRecoveryValue').innerHTML = numberWithCommas(data.recovered.value);
+        console.log(oldData);
+        if(oldData !== null && oldData !== undefined &&  oldData !== '') {
+            if(oldData.confirmed !== null || oldData.confirmed !== undefined || oldData.confirmed !== '')
+            document.getElementById('figuresLastOngoing').innerHTML = `, &#8593; ${numberWithCommas( (data.confirmed.value - (data.deaths.value + data.recovered.value)) - (oldData.confirmed.value - (oldData.deaths.value + oldData.recovered.value)) )} since you last viewed`;
+            document.getElementById('figuresLastDeaths').innerHTML = `, &#8593; ${numberWithCommas(data.deaths.value -  oldData.deaths.value)} since you last viewed`;
+            document.getElementById('figuresLastRecovery').innerHTML = `, &#8593; ${numberWithCommas(data.recovered.value -  oldData.recovered.value)} since you last viewed`;
+        } else {
+            document.getElementById('figuresLastOngoing').innerHTML = '';
+            document.getElementById('figuresLastDeaths').innerHTML = '';
+            document.getElementById('figuresLastRecovery').innerHTML = '';
+        }
+        
     }
 
     function updateGraph(data) {
@@ -651,27 +702,30 @@
     }
 
     function retreiveCountryData(country) {
+        document.getElementsByClassName('lds-ellipsis')[0].style.display = 'block';
         document.getElementById('statusMessage').style.opacity = '0';
-                if(country === '') {
-                    document.getElementById('percentOfPopulation').innerHTML = '';
-                    document.getElementById('countryInfoSection').style.display = 'none';
-                    document.getElementById('headerCountry').innerHTML = 'the world';
-                    composeTable(JSON.parse(localStorage.getItem('covid19_general')));
-                } else {
+                // if(country === '') {
+                //     document.getElementById('percentOfPopulation').innerHTML = '';
+                //     document.getElementById('countryInfoSection').style.display = 'none';
+                //     document.getElementById('headerCountry').innerHTML = 'the world';
+                //     fillInFields(JSON.parse(localStorage.getItem('covid19_general_new')));
+                //     updateGraph(JSON.parse(localStorage.getItem('covid19_general_new')));
+                // } else {
                     fetch(`https://covid19.mathdro.id/api/countries/${country}`)
                     .then((response) => {
                     return response.json();
                 })
                 .then((myJson) => {
                     countryInfo = myJson;
-                    if(localStorage.getItem('countryData' + country) !== null) {
-                        if( countryInfo.lastUpdate == JSON.parse(localStorage.getItem('countryData' + country)).lastUpdate ) {
+                    localStorage.setItem(`countryData${country}_old`, localStorage.getItem(`countryData${country}_new`));
+                    if(localStorage.getItem(`countryData${country}_new`) !== null) {
+                        if( countryInfo.lastUpdate == JSON.parse(localStorage.getItem(`countryData${country}_old`)).lastUpdate ) {
                             document.getElementById('statusMessage').innerHTML = 'No change since you last refreshed';
                             document.getElementById('statusMessage').style.opacity = '1';
                         }
                     }
-                    localStorage.setItem('countryData' + country, JSON.stringify(countryInfo));
-                    fillInFields(countryInfo);
+                    localStorage.setItem(`countryData${country}_new`, JSON.stringify(countryInfo));
+                    fillInFields(JSON.parse(localStorage.getItem(`countryData${country}_new`)),JSON.parse(localStorage.getItem(`countryData${country}_old`)));
                     updateGraph(countryInfo);
                     document.getElementById('headerCountry').innerHTML = country;
                 })
@@ -696,13 +750,18 @@
                             document.getElementById('countryInfoSection').style.display = 'flex';
                             document.getElementById('percentOfPopulation').innerHTML = `, ${((Number(countryInfo.confirmed.value)/Number(countryData.population))*100).toFixed(5)}% of population`;
                         })
+                        .catch(function(error) {
+                            console.log(error);
+                            document.getElementById('countryInfoSection').style.display = 'none';
+                        })
                         gtag('event','click',{'event_category':'countrySelection','event_label':document.getElementById('countryDropdown').value});
                 })
                 .catch(function(error) {
                     console.log(error);
                     alert("No data for this country, I guess they're safe for now?");
                 });
-                    }
+                document.getElementsByClassName('lds-ellipsis')[0].style.display = 'none';
+                    // }
     }
 
     function buildDailyData() {
@@ -920,6 +979,7 @@ function getStateFigures() {
     const active = [];
     const recovered = [];
     const deaths = [];
+    const countryData = {};
     fetch('https://covid19.mathdro.id/api/confirmed')
                     .then((response) => {
                     return response.json();
@@ -934,8 +994,32 @@ function getStateFigures() {
                             <td>Total</td>
                         </tr>
                     `;
-                    console.log(myJson);
+                    document.getElementById('countriesInTable').innerHTML = `
+                        <tr>
+                            <td>Country</td>
+                            <td>Active</td>
+                            <td>Deaths</td>
+                            <td>Recovered</td>
+                            <td>Total</td>
+                        </tr>
+                    `;
                     myJson.forEach(dataLine => {
+                        console.log(countryData[dataLine.countryRegion] !== undefined)
+                        if(countryData[dataLine.countryRegion] !== undefined) {
+                            countryData[dataLine.countryRegion]['confirmed'] += Number(dataLine.confirmed);
+                            countryData[dataLine.countryRegion]['active'] += Number(dataLine.active);
+                            countryData[dataLine.countryRegion]['deaths'] += Number(dataLine.deaths);
+                            countryData[dataLine.countryRegion]['recovered'] += Number(dataLine.recovered);
+                        } else {
+                            Object.assign(countryData,{[`${dataLine.countryRegion}`]: {
+                            'confirmed':Number(dataLine.confirmed),
+                            'active':Number(dataLine.active),
+                            'deaths':Number(dataLine.deaths),
+                            'recovered':Number(dataLine.recovered)
+                            }});
+                        }
+                        console.log(countryData);
+
                         if(dataLine.countryRegion === 'Australia') {
                             states.push(dataLine.provinceState);
                             active.push(dataLine.active);
@@ -952,7 +1036,29 @@ function getStateFigures() {
                             `;
                         }
                     });
-                    console.log(states,active,deaths,recovered);    
+
+                    const arrayOfCountries = [];
+
+                    for (var country in countryData) {
+                        arrayOfCountries.push([country,countryData[country]['confirmed'],countryData[country]['active'],countryData[country]['deaths'],countryData[country]['recovered']]);
+                    }
+
+                    const sortedCountries = arrayOfCountries.sort();
+
+                    sortedCountries.forEach(country => {
+                        document.getElementById('countriesInTable').innerHTML += `
+                                <tr>
+                                    <td>${country[0]}</td>
+                                    <td>${country[2]}</td>
+                                    <td>${country[3]}</td>
+                                    <td>${country[4]}</td>
+                                    <td>${country[1]}</td>
+                                </tr>
+                            `;
+                    })
+
+                    console.log(sortedCountries);
+
                     populateDailyGraph('stateGraph',states,active,'Active',recovered,'Recovered',deaths,'Deaths');
                 })
                 .catch(function(error) {
