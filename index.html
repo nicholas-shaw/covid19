@@ -1010,7 +1010,7 @@ function getTasmanianFigures() {
                         deaths.push(Number(`${daily.deaths}`));
                         contractedWithinTas.push(Number(`${daily.contractedWithinTas}`));
                     });
-                    populateDailyGraph('tassieGraph',dates.reverse(),confirmed.reverse(),'Confirmed',recovered.reverse(),'Recovered');
+                    populateDailyGraph('tassieGraph',dates.reverse(),confirmed.reverse(),'Confirmed',recovered.reverse(),'Recovered',deaths.reverse(),'Deaths');
                 })
                 .catch(function(error) {
                     console.error(error);
