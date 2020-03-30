@@ -1005,11 +1005,12 @@ function getTasmanianFigures() {
                 .then((myJson) => {
                     myJson.forEach(daily => {
                         dates.push(`${daily.reportDate}`);
-                        confirmed.push(Number(`${daily.confirmed - daily.recovered}`));
+                        confirmed.push(`${Number(daily.confirmed) - (Number(daily.recovered) + Number(daily.deaths))}`);
                         recovered.push(Number(`${daily.recovered}`));
                         deaths.push(Number(`${daily.deaths}`));
                         contractedWithinTas.push(Number(`${daily.contractedWithinTas}`));
                     });
+                    console.log(`${confirmed} ${recovered} ${deaths}`);
                     populateDailyGraph('tassieGraph',dates.reverse(),confirmed.reverse(),'Confirmed',recovered.reverse(),'Recovered',deaths.reverse(),'Deaths');
                 })
                 .catch(function(error) {
