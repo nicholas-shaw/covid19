@@ -1,4 +1,6 @@
-[ 
+[
+ {"reportDate":"April 4, 2020","confirmed":"86","recovered":"29","deaths":"2","contractedWithinTas":"0"},
+ {"reportDate":"April 4, 2020","confirmed":"86","recovered":"26","deaths":"2","contractedWithinTas":"0"},
  {"reportDate":"April 4, 2020","confirmed":"82","recovered":"5","deaths":"2","contractedWithinTas":"0"},
  {"reportDate":"April 3, 2020","confirmed":"74","recovered":"5","deaths":"2","contractedWithinTas":"0"},
  {"reportDate":"April 2, 2020","confirmed":"74","recovered":"5","deaths":"2","contractedWithinTas":"0"},
