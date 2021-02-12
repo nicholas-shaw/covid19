@@ -531,7 +531,7 @@
     <body onload='init();'>
 
         <div id='header'>
-            <img src='https://nicklespickles.github.io/covid19/coronaHeader.png' />
+            <img src='/covid19/coronaHeader.png' />
         </div>
 
         <div id='container'>
@@ -1008,7 +1008,7 @@ function getTasmanianFigures() {
     const deaths = [];
     const contractedWithinTas = [];
     const totalRecovered = [];
-    fetch('https://nicklespickles.github.io/covid19/tasFigures.json')
+    fetch('/covid19/tasFigures.json')
                     .then((response) => {
                     return response.json();
                 })
