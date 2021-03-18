@@ -1,4 +1,8 @@
 [
+ {"reportDate":"March 19, 2021","confirmed":"227","recovered":"213","deaths":"13","contractedWithinTas":"0"},
+ {"reportDate":"March 18, 2021","confirmed":"227","recovered":"213","deaths":"13","contractedWithinTas":"0"},
+ {"reportDate":"March 17, 2021","confirmed":"227","recovered":"213","deaths":"13","contractedWithinTas":"0"},
+ {"reportDate":"March 16, 2021","confirmed":"227","recovered":"213","deaths":"13","contractedWithinTas":"0"},
  {"reportDate":"March 15, 2021","confirmed":"227","recovered":"213","deaths":"13","contractedWithinTas":"0"},
  {"reportDate":"July 23, 2020","confirmed":"227","recovered":"213","deaths":"13","contractedWithinTas":"0"},
  {"reportDate":"July 22, 2020","confirmed":"227","recovered":"213","deaths":"13","contractedWithinTas":"0"},
