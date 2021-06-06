@@ -689,8 +689,7 @@
                 element.querySelector('.accordionBody').classList.toggle('accordionOpen');
             }
 
-            function ge
-            ata() {
+            function getData() {
                 document.getElementsByClassName('lds-ellipsis')[0].style.display = 'block';
                 document.getElementById('statusMessage').style.opacity = '0';
                 if(document.getElementById('countryDropdown').value !== '') {
@@ -698,8 +697,7 @@
                 } else {
                     gtag('event','click',{'event_category':'countrySelection','event_label':'refreshedGlobal'});
 
-                const las
-                ata = JSON.parse(localStorage.getItem('covid19_general_old'));
+                const lastData = JSON.parse(localStorage.getItem('covid19_general_old'));
                 document.getElementById('headerCountry').innerHTML = 'the world';
                 fetch('https://covid19.mathdro.id/api')
                     .then((response) => {
