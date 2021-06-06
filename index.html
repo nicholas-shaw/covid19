@@ -366,10 +366,6 @@
         background-color: white;
     }
 
-    #countryTable > tbody > tr:nth-child(1){
-        font-weight: 700;
-    }
-
     #countryTable  th{ 
         top: 0;
         position: sticky;
@@ -382,7 +378,7 @@
     }
 
     #countryTable > tbody > tr:nth-child(even) {
-        background-color: #ccc;
+        background-color: #d9d9d9;
     }
 
     #stateTableContainer {
@@ -693,7 +689,8 @@
                 element.querySelector('.accordionBody').classList.toggle('accordionOpen');
             }
 
-            function getData() {
+            function ge
+            ata() {
                 document.getElementsByClassName('lds-ellipsis')[0].style.display = 'block';
                 document.getElementById('statusMessage').style.opacity = '0';
                 if(document.getElementById('countryDropdown').value !== '') {
@@ -701,7 +698,8 @@
                 } else {
                     gtag('event','click',{'event_category':'countrySelection','event_label':'refreshedGlobal'});
 
-                const lastData = JSON.parse(localStorage.getItem('covid19_general_old'));
+                const las
+                ata = JSON.parse(localStorage.getItem('covid19_general_old'));
                 document.getElementById('headerCountry').innerHTML = 'the world';
                 fetch('https://covid19.mathdro.id/api')
                     .then((response) => {
