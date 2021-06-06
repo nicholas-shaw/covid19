@@ -370,6 +370,11 @@
         font-weight: 700;
     }
 
+    #countryTable  th{ 
+        top: 0;
+        position: sticky;
+    }
+        
     #countryTable  td{
         width: 100%;
         border: 1px solid #ccc;
@@ -614,6 +619,15 @@
                 List of countries<span class="accordionHeaderIcon">+</span>
                 <div class='accordionBody'>
                     <table id='countryTable'>
+                        <thead>
+                            <tr>
+                                <th>Country</th>
+                                <th>Active</th>
+                                <th>Deaths</th>
+                                <th>Recovered</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
                         <tbody id='countriesInTable'>
         
                         </tbody>
@@ -1045,15 +1059,6 @@ function getStateFigures() {
                     document.getElementById('stateFigures').innerHTML = `
                         <tr>
                             <td>State</td>
-                            <td>Active</td>
-                            <td>Deaths</td>
-                            <td>Recovered</td>
-                            <td>Total</td>
-                        </tr>
-                    `;
-                    document.getElementById('countriesInTable').innerHTML = `
-                        <tr>
-                            <td>Country</td>
                             <td>Active</td>
                             <td>Deaths</td>
                             <td>Recovered</td>
