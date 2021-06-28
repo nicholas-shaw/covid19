@@ -630,15 +630,6 @@
                     </table>
                 </div>
             </div>
-            <h1>World data - day-by-day charts</h1>
-            <div class='graphContainer'>
-                <div class='graphSection'>
-                    <canvas class='graphCanvas' id='countrySplitGraph'></canvas>
-                </div>
-                <div class='graphSection'>
-                    <canvas class='graphCanvas' id='totalConfirmedGraph'></canvas>
-                </div>
-            </div>
             <h1>Australia - the state of the states</h1>
             <div class='graphContainer'>
                 <div class='graphSection'>
@@ -854,8 +845,6 @@
                     //         document.getElementById('countryDropdown').innerHTML += `<option value='${value}'>${key}</option>`
                     // }
                 })
-                populateDailyGraph('countrySplitGraph',dates,chinaCount,'Mainland China',outside,'Outside China');
-                populateDailyGraph('totalConfirmedGraph',dates,totalConfirmed,'Confirmed, not yet resolved',totalRecovered,'Recovered');
             });
     }
 
